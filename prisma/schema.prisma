@@ -1,0 +1,30 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Submission {
+  id          String   @id @default(cuid())
+  email       String
+  answers     Json
+  result      Json
+  submittedAt DateTime @default(now())
+
+  @@index([email, submittedAt])
+}
+
+model Draft {
+  email     String   @id
+  answers   Json
+  updatedAt DateTime @updatedAt
+}
+
+model LastResult {
+  email   String   @id
+  result  Json
+  savedAt DateTime @updatedAt
+}

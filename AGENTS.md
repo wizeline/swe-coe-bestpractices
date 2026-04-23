@@ -1,0 +1,116 @@
+# AGENTS.md — SWE Best Practices Pulse
+
+AI agent and coding assistant instructions for this repository.
+
+## Project Overview
+
+**SWE Best Practices Pulse** is a Next.js 16 internal tool for self-assessing engineering maturity across five pillars. Developers score 14 practices on a 1–4 scale (14 questions × 4 levels = 0–48 raw score) and receive maturity labels, weighted pillar scores, and prioritized recommendations.
+
+- **Stack:** Next.js 16 (App Router), TypeScript 5 strict, plain CSS, no Tailwind
+- **State:** Prisma + SQLite/Postgres via Next.js Route Handlers (`/api/*`)
+- **Routes:** `/` → redirect, `/assessment` (form), `/dashboard` (results)
+
+## Architecture
+
+```
+src/
+├── app/               # Next.js App Router pages + globals.css
+│   └── api/           # Route handlers for submissions, drafts, last-result
+├── components/
+│   └── assessment/    # All UI components (client-only, "use client")
+├── data/              # assessmentTemplate.ts — questions, pillars, recommendations
+├── lib/               # scoring.ts (pure), storage.ts (API client), prisma.ts (singleton client)
+└── types/             # assessment.ts — canonical domain types
+```
+
+**Key invariant:** `src/lib/scoring.ts` is a pure function — never import browser APIs there.  
+**Key invariant:** `src/lib/prisma.ts` owns the singleton Prisma client for server/runtime safety.  
+**Key invariant:** `src/lib/storage.ts` is a client API wrapper around `/api/*` and must not read/write browser storage directly.
+
+## Code Style
+
+- TypeScript strict mode — no `any`, no `@ts-ignore`
+- All React components are `"use client"` — this project has no Server Components with state
+- CSS is in `src/app/globals.css` using CSS variables (`--brand-primary`, `--text`, `--bg-soft`, etc.)
+- No Tailwind, no CSS-in-JS, no component libraries
+- Use `clamp()` for responsive sizing; breakpoints at 768px, 540px, 480px
+- Fonts: `var(--font-heading)` = Space Grotesk, `var(--font-mono)` = IBM Plex Mono
+
+## Scoring Domain
+
+- `ScoreValue = 1 | 2 | 3 | 4` — never use raw numbers outside this union
+- **Per-question:** 1 = Foundational, 2 = Disciplined, 3 = Optimized, 4 = Strategic
+- **Raw score range:** 0–48 (14 questions × 4 levels)
+- **Maturity thresholds:** `<13` Foundational · `13–24` Disciplined · `25–36` Optimized · `≥37` Strategic
+- `calculateAssessment(model, answers)` returns an `AssessmentResult` — the single source of truth for all scores
+
+## Persistence
+
+Prisma models (see `prisma/schema.prisma`):
+
+| Model | Contents |
+| ----- | -------- |
+| `Submission` | Completed assessments (`email`, `answers`, `result`, `submittedAt`) |
+| `Draft` | In-progress answers keyed by `email` |
+| `LastResult` | Latest result snapshot per `email` |
+
+Never query Prisma directly from client components — use `src/lib/storage.ts` and `/api/*` route handlers.
+
+## Build & Test
+
+```bash
+npm install          # install dependencies
+npm run prisma:migrate:dev # create/update local database schema
+npm run dev          # start dev server on http://localhost:3000
+npm run build        # production build (must pass before any PR)
+npm run lint         # ESLint (must return 0 errors before any PR)
+npm test             # run unit tests with Vitest
+npm run test:watch   # Vitest in watch mode
+npm run test:coverage # coverage report (HTML in coverage/)
+```
+
+**CI gates:** `lint` → `test` → `build` — all three must pass.
+
+## Feature Delivery Requirements (Agents)
+
+When a user asks to develop a new feature, agents must deliver all of the following in the same task unless explicitly told otherwise:
+
+1. Implement the feature code using existing architecture and conventions.
+2. Add or update unit tests that cover the new behavior and critical edge cases.
+3. Update documentation to reflect the change (at minimum, relevant sections in `README.md`; update `AGENTS.md` too if repository rules or workflows changed).
+
+Before finishing feature work, run validation gates:
+
+- `npm run lint`
+- `npm test`
+- `npm run build`
+
+If any required item cannot be completed (for example, missing testability in legacy code), the agent must state exactly what is missing and why.
+
+## Testing Conventions
+
+- Tests live in `src/lib/__tests__/` alongside the code they test
+- Use Vitest globals (`describe`, `it`, `expect`, `beforeEach`) — no imports needed for them
+- Mock `fetch` in storage tests (`src/lib/storage.ts` is API-based)
+- Keep team stats logic tested via pure helper (`buildTeamStats`)
+- Test pure logic (scoring) separately from storage side-effects
+- Aim for branch coverage on all scoring thresholds and edge cases
+
+## Adding Questions or Pillars
+
+1. Edit `src/data/assessmentTemplate.ts`
+2. Add questions with unique `id` (`p{n}-q{n}` convention)
+3. Add at least one `Recommendation` per score band (`maxScoreInclusive: 12 | 24 | 36`)
+4. Hints must follow the format: `"1 = foundational text · 2 = disciplined text · 3 = optimized text · 4 = strategic text"` — parsed into colored bullets by `HintToggle`
+5. Keep `weight` values summing to 1.0 across all categories
+6. Run `npm test && npm run build` to confirm nothing regressed
+
+## Common Gotchas
+
+- **Don't add `"use client"` to `src/lib/*.ts`** — they're plain TypeScript modules
+- **Don't instantiate `PrismaClient` in multiple files** — use `src/lib/prisma.ts`
+- **Don't call Prisma from client components** — use `/api/*` route handlers
+- **Don't use `0–3` scale** — the scale is `1–4`; `ScoreValue` enforces this
+- **Don't use normalized scores** — use raw 0–48 scale for thresholds and maturity labels
+- **`AssessmentApp.tsx` is a legacy entry point** — the active form is `AssessmentForm.tsx`
+- **`vitest.config.ts`** sets the `@` path alias to `src/` — use `@/lib/...` in imports
