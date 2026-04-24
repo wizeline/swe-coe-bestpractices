@@ -46,10 +46,6 @@ export function AdminOverview({
             <strong className="stat-value">{databaseStats.totalSessions}</strong>
           </div>
           <div className="stat-item">
-            <span className="stat-label">Saved Results</span>
-            <strong className="stat-value">{databaseStats.totalLastResults}</strong>
-          </div>
-          <div className="stat-item">
             <span className="stat-label">Participants</span>
             <strong className="stat-value">{databaseStats.uniqueParticipants}</strong>
           </div>

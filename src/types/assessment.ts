@@ -87,7 +87,6 @@ export interface TeamStats {
 export interface DatabaseStats {
   totalAssessments: number;
   totalSessions: number;
-  totalLastResults: number;
   uniqueParticipants: number;
   uniqueSessionOwners: number;
 }
@@ -147,11 +146,4 @@ export interface AdminPagination {
   pageSize: number;
   totalItems: number;
   totalPages: number;
-}
-
-export interface LastResultRecord {
-  email: string;
-  sessionKey: string;
-  result: AssessmentResult;
-  savedAt: string;
 }

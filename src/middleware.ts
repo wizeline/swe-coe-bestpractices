@@ -22,7 +22,6 @@ export const config = {
     "/admin/:path*",
     "/assessment/:path*",
     "/dashboard/:path*",
-    "/api/last-result/:path*",
     "/api/sessions/:path*",
     "/api/submissions/:path*",
   ],

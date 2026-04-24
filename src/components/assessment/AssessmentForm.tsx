@@ -6,7 +6,7 @@ import { assessmentTemplate } from "@/data/assessmentTemplate";
 import { clearDraft, loadDraft, saveDraft } from "@/lib/draftStorage";
 import { parseHintBullets } from "@/lib/questionOptions";
 import { calculateAssessment } from "@/lib/scoring";
-import { addSubmission, getSessionByCode, saveLastResult } from "@/lib/storage";
+import { addSubmission, getSessionByCode } from "@/lib/storage";
 import { AnswerMap, AssessmentSessionRecord, ScoreValue } from "@/types/assessment";
 
 const scaleConfig: { value: ScoreValue; label: string }[] = [
@@ -111,7 +111,6 @@ export function AssessmentForm({ userEmail, initialSessionCode }: AssessmentForm
     try {
       const result = calculateAssessment(assessmentTemplate, answers);
       await addSubmission(answers, result, initialSessionCode ?? undefined);
-      await saveLastResult(result, sessionKey);
       await clearDraft(sessionKey);
       router.push(initialSessionCode ? `/dashboard?session=${encodeURIComponent(initialSessionCode)}` : "/dashboard");
     } catch (error) {

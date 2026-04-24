@@ -153,7 +153,7 @@ prisma/
 src/
   app/
     admin/                  # Admin-only cross-team comparison page
-    api/                    # Route handlers for submissions, drafts, last-result
+    api/                    # Route handlers for submissions, sessions
   components/
     assessment/             # UI components
   data/                     # assessmentTemplate.ts
@@ -166,9 +166,7 @@ src/
 Prisma models:
 
 - `AssessmentSession` — owner-created team voting sessions with shareable codes
-- `Submission` — completed assessments
-- `Draft` — legacy server-side draft storage (current UI uses browser localStorage for in-progress answers)
-- `LastResult` — latest result snapshot by email and session key
+- `Submission` — completed assessments with full answer history
 
 Session owners can create and delete their own `AssessmentSession` records from the dashboard.
 Configured admins can access `/admin` to compare all sessions and inspect database-wide activity counts.

@@ -9,10 +9,8 @@ import {
   getSessionByCode,
   getLatestSubmissionByEmail,
   loadAllSubmissions,
-  loadLastResult,
   loadOwnedSessions,
   loadTeamSubmissions,
-  saveLastResult,
 } from "@/lib/storage";
 import type { AssessmentResult, AssessmentSessionRecord, SubmissionRecord } from "@/types/assessment";
 
@@ -49,19 +47,6 @@ function mockJsonResponse(payload: unknown, ok = true, status = 200) {
 
 beforeEach(() => {
   mockFetch.mockReset();
-});
-
-describe("draft API storage", () => {
-  it("does not call draft endpoints from API storage", async () => {
-    mockJsonResponse({ ok: true });
-
-    await saveLastResult(makeResult(2));
-
-    const calledDraftEndpoint = mockFetch.mock.calls.some((call) =>
-      String(call[0]).includes("/api/drafts"),
-    );
-    expect(calledDraftEndpoint).toBe(false);
-  });
 });
 
 describe("submission API storage", () => {
@@ -205,37 +190,6 @@ describe("session API storage", () => {
         method: "DELETE",
         body: JSON.stringify({ id: "sess-2" }),
       }),
-    );
-  });
-});
-
-describe("last result API storage", () => {
-  it("saves last result", async () => {
-    mockJsonResponse({ ok: true });
-
-    await saveLastResult(makeResult(2));
-
-    expect(mockFetch).toHaveBeenCalledWith(
-      "/api/last-result",
-      expect.objectContaining({
-        method: "PUT",
-        body: JSON.stringify({ result: makeResult(2), sessionKey: "personal" }),
-      }),
-    );
-  });
-
-  it("loads last result", async () => {
-    const result = makeResult(4);
-    mockJsonResponse({
-      data: {
-        email: "user@example.com",
-        result,
-        savedAt: new Date().toISOString(),
-      },
-    });
-
-    await expect(loadLastResult()).resolves.toEqual(
-      expect.objectContaining({ email: "user@example.com", result }),
     );
   });
 });

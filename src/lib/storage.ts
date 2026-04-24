@@ -3,15 +3,9 @@ import {
   AssessmentSessionRecord,
   AnswerMap,
   AssessmentResult,
-  LastResultRecord,
   SubmissionRecord,
   TeamStats,
 } from "@/types/assessment";
-
-function withSessionKey(path: string, sessionKey = "personal"): string {
-  const search = new URLSearchParams({ sessionKey });
-  return `${path}?${search.toString()}`;
-}
 
 async function requestJson<T>(input: string, init?: RequestInit): Promise<T> {
   const response = await fetch(input, {
@@ -27,18 +21,6 @@ async function requestJson<T>(input: string, init?: RequestInit): Promise<T> {
   }
 
   return (await response.json()) as T;
-}
-
-export async function saveLastResult(result: AssessmentResult, sessionKey = "personal"): Promise<void> {
-  await requestJson("/api/last-result", {
-    method: "PUT",
-    body: JSON.stringify({ result, sessionKey }),
-  });
-}
-
-export async function loadLastResult(sessionKey = "personal"): Promise<LastResultRecord | null> {
-  const result = await requestJson<{ data: LastResultRecord | null }>(withSessionKey("/api/last-result", sessionKey));
-  return result.data;
 }
 
 export async function addSubmission(

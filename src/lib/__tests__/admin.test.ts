@@ -91,7 +91,6 @@ describe("buildCrossTeamComparison", () => {
     const databaseStats: DatabaseStats = {
       totalAssessments: 5,
       totalSessions: 2,
-      totalLastResults: 4,
       uniqueParticipants: 3,
       uniqueSessionOwners: 2,
     };
@@ -143,7 +142,7 @@ describe("buildCrossTeamComparison", () => {
       {
         totalAssessments: 0,
         totalSessions: 1,
-        totalLastResults: 0,
+
         uniqueParticipants: 0,
         uniqueSessionOwners: 1,
       },

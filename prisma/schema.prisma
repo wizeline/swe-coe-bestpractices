@@ -26,24 +26,6 @@ model Submission {
   @@index([submittedAt])
 }
 
-model Draft {
-  email      String
-  sessionKey String   @default("personal")
-  answers    Json
-  updatedAt  DateTime @updatedAt
-
-  @@id([email, sessionKey])
-}
-
-model LastResult {
-  email      String
-  sessionKey String   @default("personal")
-  result     Json
-  savedAt    DateTime @updatedAt
-
-  @@id([email, sessionKey])
-}
-
 model AssessmentSession {
   id         String       @id @default(cuid())
   code       String       @unique

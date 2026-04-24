@@ -15,7 +15,7 @@ AI agent and coding assistant instructions for this repository.
 ```
 src/
 ├── app/               # Next.js App Router pages + globals.css
-│   └── api/           # Route handlers for submissions, drafts, last-result
+│   └── api/           # Route handlers for submissions, sessions
 ├── components/
 │   └── assessment/    # All UI components (client-only, "use client")
 ├── data/              # assessmentTemplate.ts — questions, pillars, recommendations
@@ -51,8 +51,7 @@ Prisma models (see `prisma/schema.prisma`):
 | Model | Contents |
 | ----- | -------- |
 | `Submission` | Completed assessments (`email`, `answers`, `result`, `submittedAt`) |
-| `Draft` | In-progress answers keyed by `email` |
-| `LastResult` | Latest result snapshot per `email` |
+| `AssessmentSession` | Team sessions for group assessments |
 
 Never query Prisma directly from client components — use `src/lib/storage.ts` and `/api/*` route handlers.
 

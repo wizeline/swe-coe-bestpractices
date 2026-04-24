@@ -100,15 +100,13 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
 
     await prisma.$transaction([
       prisma.submission.deleteMany(),
-      prisma.lastResult.deleteMany(),
-      prisma.draft.deleteMany(),
       prisma.assessmentSession.deleteMany(),
     ]);
 
     redirect("/admin?status=reset-success");
   }
 
-  const [sessions, totalAssessments, totalLastResults, uniqueParticipants, uniqueSessionOwners] = await Promise.all([
+  const [sessions, totalAssessments, uniqueParticipants, uniqueSessionOwners] = await Promise.all([
     prisma.assessmentSession.findMany({
       include: {
         submissions: {
@@ -129,7 +127,6 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
       orderBy: { createdAt: "desc" },
     }),
     prisma.submission.count(),
-    prisma.lastResult.count(),
     prisma.submission.findMany({ distinct: ["email"], select: { email: true } }),
     prisma.assessmentSession.findMany({ distinct: ["ownerEmail"], select: { ownerEmail: true } }),
   ]);
@@ -138,7 +135,6 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
     {
       totalAssessments,
       totalSessions: sessions.length,
-      totalLastResults,
       uniqueParticipants: uniqueParticipants.length,
       uniqueSessionOwners: uniqueSessionOwners.length,
     },
