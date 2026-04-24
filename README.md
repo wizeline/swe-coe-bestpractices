@@ -8,7 +8,7 @@ Internal Next.js tool for assessing engineering maturity. Developers score 14 pr
 - Plain CSS (no Tailwind)
 - Auth.js (NextAuth v5) with Google provider
 - Prisma ORM + Next.js API routes for persistence
-- SQLite by default for local development (can be switched to Postgres)
+- PostgreSQL (Neon on Vercel)
 
 ## Routes
 
@@ -81,16 +81,18 @@ npm run prisma:migrate:deploy # run production DB migrations
 
 ## Deploying To Vercel
 
-For production deploys, use a managed Postgres database (do not use SQLite for production on Vercel).
+For production deploys, use a managed PostgreSQL database.
 
 1. Set `DATABASE_URL`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, and `AUTH_SECRET` in Vercel project environment variables.
-2. Use this Build Command in Vercel:
+2. Deploy normally with Vercel CLI or Git integration.
+
+This repository includes `vercel.json` with:
 
 ```bash
-npm run prisma:migrate:deploy && npm run build
+npx prisma migrate deploy && npm run build
 ```
 
-Do not commit local SQLite files (for example `prisma/dev.db`). Commit `prisma/schema.prisma` and all files inside `prisma/migrations`.
+That ensures migrations run before the Next.js build in production.
 
 ## Project Structure
 
