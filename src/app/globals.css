@@ -1284,6 +1284,12 @@ body {
   flex-shrink: 0;
 }
 
+.session-created-at {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-family: var(--font-mono), monospace;
+}
+
 .session-list-actions {
   display: flex;
   gap: 8px;
@@ -1546,6 +1552,15 @@ table tbody tr:last-child td {
   border-bottom: none;
 }
 
+.admin-clickable-row {
+  cursor: pointer;
+  transition: background-color 150ms ease;
+}
+
+.admin-clickable-row:hover {
+  background: rgba(227, 44, 39, 0.06) !important;
+}
+
 .score-cell {
   color: var(--brand-primary);
   font-weight: 600;
@@ -1566,6 +1581,136 @@ table tbody tr:last-child td {
   color: var(--brand-primary);
   text-transform: uppercase;
   letter-spacing: 0.04em;
+}
+
+.admin-overview {
+  display: grid;
+  gap: clamp(20px, 3vw, 30px);
+}
+
+.admin-summary {
+  margin-top: 8px;
+}
+
+.admin-table-section {
+  margin-top: 0;
+}
+
+.admin-filter-card h3 {
+  font-size: 1rem;
+  margin-bottom: 12px;
+}
+
+.admin-filter-form {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
+  gap: 10px;
+  align-items: end;
+}
+
+.admin-filter-field {
+  display: grid;
+  gap: 6px;
+}
+
+.admin-filter-field label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-family: var(--font-mono), monospace;
+}
+
+.admin-filter-field input,
+.admin-filter-field select {
+  min-height: 42px;
+  border-radius: 10px;
+  border: 1px solid var(--surface-stroke);
+  background: var(--bg-soft);
+  color: var(--text);
+  font-size: 0.9rem;
+  padding: 0 12px;
+  outline: none;
+  font-family: inherit;
+}
+
+.admin-filter-field input:focus,
+.admin-filter-field select:focus {
+  border-color: var(--brand-primary);
+  box-shadow: 0 0 0 3px rgba(227, 44, 39, 0.12);
+  background: #fff;
+}
+
+.admin-filter-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.admin-page-meta {
+  margin-top: 10px;
+  color: var(--text-dim);
+  font-size: 0.84rem;
+}
+
+.admin-session-cell {
+  display: grid;
+  gap: 8px;
+}
+
+.admin-empty-cell {
+  color: var(--text-dim);
+  text-align: center;
+}
+
+.admin-reset-inline-actions {
+  margin-top: 12px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.admin-reset-trigger {
+  min-height: 36px;
+  padding: 0 14px;
+}
+
+.admin-detail-button {
+  min-height: 34px;
+}
+
+.admin-pagination {
+  margin-top: 12px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.button-disabled {
+  pointer-events: none;
+  opacity: 0.45;
+}
+
+.admin-team-meta {
+  color: var(--text-dim);
+  margin-bottom: 10px;
+  font-size: 0.88rem;
+}
+
+.admin-reset-button {
+  background: #b42318;
+  border-color: #b42318;
+}
+
+.admin-reset-button:hover {
+  background: #9a1f15;
+  border-color: #9a1f15;
+}
+
+.admin-reset-success {
+  margin-top: 10px;
+  color: #166534;
+  font-size: 0.86rem;
 }
 
 /* Team actions */
@@ -1669,6 +1814,14 @@ table tbody tr:last-child td {
     width: 100%;
     max-width: 360px;
     margin: 0 auto;
+  }
+
+  .admin-filter-form {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-filter-actions {
+    grid-template-columns: 1fr;
   }
 
   table {

@@ -56,6 +56,10 @@ export interface SubmissionRecord {
   sessionId?: string | null;
   sessionCode?: string | null;
   sessionName?: string | null;
+  totalScore?: number;
+  maxScore?: number;
+  completion?: number;
+  maturityLabel?: AssessmentResult["maturityLabel"];
   answers: AnswerMap;
   result: AssessmentResult;
   submittedAt: string;
@@ -78,6 +82,71 @@ export interface TeamStats {
   categoryAverages: Record<string, number>;
   categorySuggestions: Record<string, Recommendation[]>;
   submissionsByEmail: Record<string, SubmissionRecord[]>;
+}
+
+export interface DatabaseStats {
+  totalAssessments: number;
+  totalSessions: number;
+  totalLastResults: number;
+  uniqueParticipants: number;
+  uniqueSessionOwners: number;
+}
+
+export interface SessionComparisonRecord {
+  id: string;
+  code: string;
+  name: string;
+  ownerEmail: string;
+  createdAt: string;
+  latestSubmissionAt: string | null;
+  totalSubmissions: number;
+  uniqueParticipants: number;
+  averageTotalScore: number;
+  averageCompletion: number;
+  maxScore: number;
+  maturityLabel: AssessmentResult["maturityLabel"];
+  categoryAverages: Record<string, number>;
+}
+
+export interface CrossTeamComparison {
+  databaseStats: DatabaseStats;
+  sessions: SessionComparisonRecord[];
+}
+
+export type AdminSessionSort = "created-desc" | "created-asc" | "score-desc" | "score-asc";
+
+export interface AdminSessionFilters {
+  fromDate?: string;
+  toDate?: string;
+  sort: AdminSessionSort;
+}
+
+export interface TeamDetailSubmission {
+  id: string;
+  email: string;
+  submittedAt: string;
+  totalScore: number;
+  maxScore: number;
+  completion: number;
+  maturityLabel: AssessmentResult["maturityLabel"];
+  runningAverageScore: number;
+}
+
+export interface TeamDetailRecord {
+  code: string;
+  name: string;
+  ownerEmail: string;
+  createdAt: string;
+  totalSubmissions: number;
+  uniqueParticipants: number;
+  submissions: TeamDetailSubmission[];
+}
+
+export interface AdminPagination {
+  page: number;
+  pageSize: number;
+  totalItems: number;
+  totalPages: number;
 }
 
 export interface LastResultRecord {

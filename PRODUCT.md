@@ -38,11 +38,16 @@ Raw score range: 0-48 (14 questions x 4 levels)
 | /login | Google sign-in page |
 | /assessment | Individual or team-session voting form (auth required) |
 | /dashboard | Personal results plus owned team session reports (auth required) |
+| /admin | Admin-only cross-team comparison plus database activity stats (auth required) |
 
 Team session reports include aggregated action items by category, based on team average results for each pillar.
+Dashboard session cards show each session's creation date, and the create-session field guides naming with the `Team - Quarter` pattern.
+Draft answers are stored locally in the browser (localStorage) until the assessment is submitted.
+The admin page shows database-level counts for assessments, sessions, saved results, unique participants, and session owners.
+It also compares team sessions side by side using average score, maturity label, participation, completion, and per-pillar averages.
+Admins can filter and sort reports by session creation dates, paginate large cross-team reports, then open a dedicated team detail view with a back-to-report action to inspect submission history and running score evolution over time.
 
 ## Future Proposals
 
-- Cross-team comparison view: an admin-only page that loads all AssessmentSession records, runs buildTeamStats() per session, and renders side-by-side maturity comparison across teams.
 - Session invite by email: let owners invite specific users to a session instead of sharing a public link.
 - Historical trend charts: plot a team's average score over time when a session is run repeatedly.

@@ -11,6 +11,10 @@ model Submission {
   id          String   @id @default(cuid())
   email       String
   sessionId   String?
+  totalScore  Int?
+  maxScore    Int?
+  completion  Int?
+  maturityLabel String?
   answers     Json
   result      Json
   submittedAt DateTime @default(now())
@@ -18,6 +22,8 @@ model Submission {
 
   @@index([email, submittedAt])
   @@index([sessionId, submittedAt])
+  @@index([sessionId, totalScore])
+  @@index([submittedAt])
 }
 
 model Draft {

@@ -17,7 +17,7 @@ const average = (values: number[]) => {
   return values.reduce((acc, value) => acc + value, 0) / values.length;
 };
 
-const getMaturityLabel = (
+export const getMaturityLabel = (
   score: number,
 ): AssessmentResult["maturityLabel"] => {
   if (score < 13) {

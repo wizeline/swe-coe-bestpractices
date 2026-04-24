@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { FormEvent, useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { assessmentTemplate } from "@/data/assessmentTemplate";
+import { formatSessionCreatedAt } from "@/lib/sessionDisplay";
 import {
   buildTeamStats,
   createAssessmentSession,
@@ -31,6 +32,7 @@ const emptyTeamStats: TeamStats = {
 
 export function DashboardView({ userEmail, initialSessionCode }: DashboardViewProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [userSubmission, setUserSubmission] = useState<SubmissionRecord | null>(null);
   const [teamStats, setTeamStats] = useState<TeamStats>(emptyTeamStats);
   const [ownedSessions, setOwnedSessions] = useState<AssessmentSessionRecord[]>([]);
@@ -42,6 +44,7 @@ export function DashboardView({ userEmail, initialSessionCode }: DashboardViewPr
   const [isCreatingSession, setIsCreatingSession] = useState(false);
   const [deletingSessionId, setDeletingSessionId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const sessionCode = searchParams.get("session")?.trim().toUpperCase() ?? initialSessionCode;
   const canShowTeamView = Boolean(selectedSession?.isOwner);
   const isSessionView = Boolean(selectedSession);
 
@@ -53,13 +56,13 @@ export function DashboardView({ userEmail, initialSessionCode }: DashboardViewPr
       try {
         const [sessions, sessionRecord, latest] = await Promise.all([
           loadOwnedSessions(),
-          initialSessionCode ? getSessionByCode(initialSessionCode) : Promise.resolve(null),
-          getLatestSubmissionByEmail(initialSessionCode ?? undefined),
+          sessionCode ? getSessionByCode(sessionCode) : Promise.resolve(null),
+          getLatestSubmissionByEmail(sessionCode ?? undefined),
         ]);
 
         let nextTeamStats = emptyTeamStats;
-        if (initialSessionCode && sessionRecord?.isOwner) {
-          const teamSubmissions = await loadTeamSubmissions(initialSessionCode);
+        if (sessionCode && sessionRecord?.isOwner) {
+          const teamSubmissions = await loadTeamSubmissions(sessionCode);
           nextTeamStats = buildTeamStats(teamSubmissions);
         }
 
@@ -68,7 +71,7 @@ export function DashboardView({ userEmail, initialSessionCode }: DashboardViewPr
           setSelectedSession(sessionRecord);
           setUserSubmission(latest);
           setTeamStats(nextTeamStats);
-          setSessionError(initialSessionCode && !sessionRecord ? "Session not found." : "");
+          setSessionError(sessionCode && !sessionRecord ? "Session not found." : "");
         }
       } catch (error) {
         console.error("Dashboard load error:", error);
@@ -90,7 +93,7 @@ export function DashboardView({ userEmail, initialSessionCode }: DashboardViewPr
     return () => {
       active = false;
     };
-  }, [initialSessionCode]);
+  }, [sessionCode]);
 
   const handleCreateSession = async () => {
     if (!newSessionName.trim()) {
@@ -110,7 +113,9 @@ export function DashboardView({ userEmail, initialSessionCode }: DashboardViewPr
     }
   };
 
-  const handleJoinSession = () => {
+  const handleJoinSession = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
     const trimmed = joinSessionCode.trim().toUpperCase();
     if (!trimmed) {
       setJoinSessionError("Enter a session code.");
@@ -118,7 +123,7 @@ export function DashboardView({ userEmail, initialSessionCode }: DashboardViewPr
     }
 
     setJoinSessionError("");
-    router.push(`/dashboard?session=${encodeURIComponent(trimmed)}`);
+    window.location.assign(`/assessment?session=${encodeURIComponent(trimmed)}`);
   };
 
   const handleDeleteSession = async (session: AssessmentSessionRecord) => {
@@ -229,7 +234,7 @@ interface SessionHubProps {
   deletingSessionId: string | null;
   joinSessionCode: string;
   onJoinSessionCodeChange: (value: string) => void;
-  onJoinSession: () => void;
+  onJoinSession: (event: FormEvent<HTMLFormElement>) => void;
   newSessionName: string;
   onNewSessionNameChange: (value: string) => void;
   onCreateSession: () => void;
@@ -263,23 +268,19 @@ function SessionHub({
       </div>
 
       <div className="session-list-heading">Join with code</div>
-      <div className="session-create-row">
+      <form className="session-create-row" onSubmit={onJoinSession}>
         <input
+          name="session"
           value={joinSessionCode}
           onChange={(event) => onJoinSessionCodeChange(event.target.value)}
-          onKeyDown={(event) => {
-            if (event.key === "Enter") {
-              onJoinSession();
-            }
-          }}
           placeholder="e.g. A1B2C3"
           aria-label="Session code"
           style={{ textTransform: "uppercase" }}
         />
-        <button type="button" className="button solid" onClick={onJoinSession}>
+        <button type="submit" className="button solid">
           Join session
         </button>
-      </div>
+      </form>
       {joinSessionError && <p className="form-error">{joinSessionError}</p>}
 
       <div className="session-list-heading session-subsection-spacing">Create new session</div>
@@ -287,7 +288,7 @@ function SessionHub({
         <input
           value={newSessionName}
           onChange={(event) => onNewSessionNameChange(event.target.value)}
-          placeholder="Quarterly Architecture Review"
+          placeholder="Team - Quarter"
           aria-label="Session name"
         />
         <button type="button" className="button solid" onClick={onCreateSession} disabled={isCreatingSession}>
@@ -304,6 +305,7 @@ function SessionHub({
               <div>
                 <strong>{session.name}</strong>
                 <span className="session-code-badge">{session.code}</span>
+                <span className="session-created-at">Created {formatSessionCreatedAt(session.createdAt)}</span>
               </div>
               <div className="session-list-actions">
                 <a href={`/assessment?session=${encodeURIComponent(session.code)}`} className="button ghost">
@@ -334,41 +336,6 @@ function SessionHub({
 interface ScoreCardProps {
   result: AssessmentResult;
   email: string;
-}
-
-function SessionCodeInput() {
-  const router = useRouter();
-  const [code, setCode] = useState("");
-  const [error, setError] = useState("");
-
-  const handleJoin = () => {
-    const trimmed = code.trim().toUpperCase();
-    if (!trimmed) {
-      setError("Enter a session code.");
-      return;
-    }
-    router.push(`/dashboard?session=${encodeURIComponent(trimmed)}`);
-  };
-
-  return (
-    <div>
-      <div className="session-create-row">
-        <input
-          value={code}
-          onChange={(e) => { setCode(e.target.value); setError(""); }}
-          onKeyDown={(e) => e.key === "Enter" && handleJoin()}
-          placeholder="e.g. A1B2C3"
-          aria-label="Session code"
-          maxLength={10}
-          style={{ textTransform: "uppercase" }}
-        />
-        <button type="button" className="button solid" onClick={handleJoin}>
-          Join session
-        </button>
-      </div>
-      {error && <p className="form-error">{error}</p>}
-    </div>
-  );
 }
 
 function ScoreCard({ result, email }: ScoreCardProps) {
@@ -442,9 +409,6 @@ function ScoreCard({ result, email }: ScoreCardProps) {
         </section>
       </article>
 
-      <article className="card results-content-card results-content-card--session-code">
-        <SessionCodeInput />
-      </article>
     </div>
   );
 }

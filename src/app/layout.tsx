@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Space_Grotesk, IBM_Plex_Mono } from "next/font/google";
 import { auth, signOut } from "@/auth";
+import { isAdminEmail } from "@/lib/admin";
 import "./globals.css";
 
 const spaceGrotesk = Space_Grotesk({
@@ -28,6 +29,7 @@ export default async function RootLayout({
 }>) {
   const session = await auth();
   const userEmail = session?.user?.email;
+  const canViewAdmin = isAdminEmail(userEmail);
 
   return (
     <html
@@ -46,6 +48,11 @@ export default async function RootLayout({
                   <li>
                     <Link href="/dashboard">Dashboard</Link>
                   </li>
+                  {canViewAdmin && (
+                    <li>
+                      <Link href="/admin">Admin</Link>
+                    </li>
+                  )}
                   <li>
                     <span className="email-badge">{userEmail}</span>
                   </li>

@@ -3,18 +3,15 @@ import { assessmentTemplate } from "@/data/assessmentTemplate";
 import {
   addSubmission,
   buildTeamStats,
-  clearDraft,
   createAssessmentSession,
   deleteAssessmentSession,
   deleteSubmission,
   getSessionByCode,
   getLatestSubmissionByEmail,
   loadAllSubmissions,
-  loadDraft,
   loadLastResult,
   loadOwnedSessions,
   loadTeamSubmissions,
-  saveDraft,
   saveLastResult,
 } from "@/lib/storage";
 import type { AssessmentResult, AssessmentSessionRecord, SubmissionRecord } from "@/types/assessment";
@@ -55,41 +52,15 @@ beforeEach(() => {
 });
 
 describe("draft API storage", () => {
-  it("loads draft answers for the current session", async () => {
-    mockJsonResponse({ answers: { q1: 2, q2: 3 } });
-
-    await expect(loadDraft()).resolves.toEqual({ q1: 2, q2: 3 });
-    expect(mockFetch).toHaveBeenCalledWith(
-      "/api/drafts?sessionKey=personal",
-      expect.objectContaining({ headers: expect.any(Object) }),
-    );
-  });
-
-  it("saves draft answers without sending email", async () => {
+  it("does not call draft endpoints from API storage", async () => {
     mockJsonResponse({ ok: true });
 
-    await saveDraft({ q1: 4 });
+    await saveLastResult(makeResult(2));
 
-    expect(mockFetch).toHaveBeenCalledWith(
-      "/api/drafts",
-      expect.objectContaining({
-        method: "PUT",
-        body: JSON.stringify({ answers: { q1: 4 }, sessionKey: "personal" }),
-      }),
+    const calledDraftEndpoint = mockFetch.mock.calls.some((call) =>
+      String(call[0]).includes("/api/drafts"),
     );
-  });
-
-  it("clears the current session draft", async () => {
-    mockJsonResponse({ ok: true });
-
-    await clearDraft();
-
-    expect(mockFetch).toHaveBeenCalledWith(
-      "/api/drafts",
-      expect.objectContaining({
-        method: "DELETE",
-      }),
-    );
+    expect(calledDraftEndpoint).toBe(false);
   });
 });
 

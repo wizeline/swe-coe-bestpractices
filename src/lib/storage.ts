@@ -1,4 +1,4 @@
-import { assessmentTemplate } from "@/data/assessmentTemplate";
+import { buildTeamStats } from "@/lib/teamStats";
 import {
   AssessmentSessionRecord,
   AnswerMap,
@@ -27,25 +27,6 @@ async function requestJson<T>(input: string, init?: RequestInit): Promise<T> {
   }
 
   return (await response.json()) as T;
-}
-
-export async function saveDraft(answers: AnswerMap, sessionKey = "personal"): Promise<void> {
-  await requestJson("/api/drafts", {
-    method: "PUT",
-    body: JSON.stringify({ answers, sessionKey }),
-  });
-}
-
-export async function loadDraft(sessionKey = "personal"): Promise<AnswerMap> {
-  const result = await requestJson<{ answers: AnswerMap | null }>(withSessionKey("/api/drafts", sessionKey));
-  return result.answers ?? {};
-}
-
-export async function clearDraft(sessionKey = "personal"): Promise<void> {
-  await requestJson("/api/drafts", {
-    method: "DELETE",
-    body: JSON.stringify({ sessionKey }),
-  });
 }
 
 export async function saveLastResult(result: AssessmentResult, sessionKey = "personal"): Promise<void> {
@@ -114,60 +95,7 @@ export async function deleteAssessmentSession(id: string): Promise<void> {
   });
 }
 
-export function buildTeamStats(submissions: SubmissionRecord[]): TeamStats {
-  const submissionsByEmail: Record<string, SubmissionRecord[]> = {};
-
-  submissions.forEach((sub) => {
-    if (!submissionsByEmail[sub.email]) {
-      submissionsByEmail[sub.email] = [];
-    }
-    submissionsByEmail[sub.email].push(sub);
-  });
-
-  const totalScores = submissions.map((s) => s.result.totalScore);
-  const averageTotalScore =
-    totalScores.length > 0
-      ? Number((totalScores.reduce((a, b) => a + b, 0) / totalScores.length).toFixed(1))
-      : 0;
-
-  const maxTotalScore = submissions[0]?.result.maxScore ?? assessmentTemplate.categories.reduce(
-    (acc, category) => acc + category.questions.length * 4,
-    0,
-  );
-
-  const categoryAverages: Record<string, number> = {};
-  const categorySuggestions: Record<string, TeamStats["categorySuggestions"][string]> = {};
-  if (submissions.length > 0) {
-    const categoryCount = submissions[0].result.categories.length;
-    for (let i = 0; i < categoryCount; i++) {
-      const categoryScores = submissions.map((s) => s.result.categories[i].score);
-      const categoryId = submissions[0].result.categories[i].id;
-      const averageScore = Number(
-        (categoryScores.reduce((a, b) => a + b, 0) / categoryScores.length).toFixed(2),
-      );
-
-      categoryAverages[categoryId] = averageScore;
-
-      const categoryTemplate = assessmentTemplate.categories.find((category) => category.id === categoryId);
-      categorySuggestions[categoryId] = categoryTemplate
-        ? [...categoryTemplate.recommendations]
-          .sort((a, b) => a.maxScoreInclusive - b.maxScoreInclusive)
-          .filter((item) => averageScore <= item.maxScoreInclusive)
-          .slice(0, 2)
-        : [];
-    }
-  }
-
-  return {
-    totalSubmissions: submissions.length,
-    uniqueParticipants: Object.keys(submissionsByEmail).length,
-    averageTotalScore,
-    maxTotalScore,
-    categoryAverages,
-    categorySuggestions,
-    submissionsByEmail,
-  };
-}
+export { buildTeamStats };
 
 export async function getTeamStats(): Promise<TeamStats> {
   const submissions = await loadAllSubmissions();

@@ -30,6 +30,9 @@ Required auth variables:
 - GOOGLE_CLIENT_ID
 - GOOGLE_CLIENT_SECRET
 - AUTH_SECRET
+- ADMIN_EMAILS
+
+`ADMIN_EMAILS` should be a comma-separated list of user emails allowed to access the `/admin` route.
 
 1. Start local PostgreSQL with Docker:
 
@@ -100,6 +103,7 @@ npm run prisma:migrate:deploy # run production DB migrations
 For production deploys, use a managed PostgreSQL database.
 
 1. Set `DATABASE_URL`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, and `AUTH_SECRET` in Vercel project environment variables.
+1. Set `ADMIN_EMAILS` in Vercel if you want to enable the admin comparison page.
 2. Deploy normally with Vercel CLI or Git integration.
 
 This repository includes `vercel.json` with:
@@ -148,6 +152,7 @@ prisma/
   schema.prisma
 src/
   app/
+    admin/                  # Admin-only cross-team comparison page
     api/                    # Route handlers for submissions, drafts, last-result
   components/
     assessment/             # UI components
@@ -162,10 +167,14 @@ Prisma models:
 
 - `AssessmentSession` — owner-created team voting sessions with shareable codes
 - `Submission` — completed assessments
-- `Draft` — in-progress answers by email and session key
+- `Draft` — legacy server-side draft storage (current UI uses browser localStorage for in-progress answers)
 - `LastResult` — latest result snapshot by email and session key
 
 Session owners can create and delete their own `AssessmentSession` records from the dashboard.
+Configured admins can access `/admin` to compare all sessions and inspect database-wide activity counts.
+The admin report supports `from`, `to`, `sort`, and `page` query params for date filtering, ordering, and pagination. Team drilldown uses `/admin/team/[code]` and preserves active report filters in the URL for return navigation.
+
+`Submission` also stores denormalized metrics (`totalScore`, `maxScore`, `completion`, `maturityLabel`) to support more efficient reporting and future DB-level aggregations.
 
 All assessment data is scoped to the authenticated session email on the server.
 Client components should use `src/lib/storage.ts`. Do not call Prisma directly from client-side code.
