@@ -23,6 +23,7 @@ export const config = {
     "/dashboard/:path*",
     "/api/drafts/:path*",
     "/api/last-result/:path*",
+    "/api/sessions/:path*",
     "/api/submissions/:path*",
   ],
 };

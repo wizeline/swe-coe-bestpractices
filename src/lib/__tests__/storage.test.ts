@@ -3,15 +3,20 @@ import {
   addSubmission,
   buildTeamStats,
   clearDraft,
+  createAssessmentSession,
+  deleteAssessmentSession,
   deleteSubmission,
+  getSessionByCode,
   getLatestSubmissionByEmail,
   loadAllSubmissions,
   loadDraft,
   loadLastResult,
+  loadOwnedSessions,
+  loadTeamSubmissions,
   saveDraft,
   saveLastResult,
 } from "@/lib/storage";
-import type { AssessmentResult, SubmissionRecord } from "@/types/assessment";
+import type { AssessmentResult, AssessmentSessionRecord, SubmissionRecord } from "@/types/assessment";
 
 const makeResult = (overallScore: number, totalScore = overallScore, maxScore = 4): AssessmentResult => ({
   overallScore,
@@ -54,7 +59,7 @@ describe("draft API storage", () => {
 
     await expect(loadDraft()).resolves.toEqual({ q1: 2, q2: 3 });
     expect(mockFetch).toHaveBeenCalledWith(
-      "/api/drafts",
+      "/api/drafts?sessionKey=personal",
       expect.objectContaining({ headers: expect.any(Object) }),
     );
   });
@@ -68,7 +73,7 @@ describe("draft API storage", () => {
       "/api/drafts",
       expect.objectContaining({
         method: "PUT",
-        body: JSON.stringify({ answers: { q1: 4 } }),
+        body: JSON.stringify({ answers: { q1: 4 }, sessionKey: "personal" }),
       }),
     );
   });
@@ -130,6 +135,17 @@ describe("submission API storage", () => {
     );
   });
 
+  it("loads team submissions for a session owner", async () => {
+    mockJsonResponse([]);
+
+    await expect(loadTeamSubmissions("TEAM42")).resolves.toEqual([]);
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      "/api/submissions?sessionCode=TEAM42&team=true",
+      expect.objectContaining({ headers: expect.any(Object) }),
+    );
+  });
+
   it("loads all submissions", async () => {
     mockJsonResponse([]);
 
@@ -152,6 +168,75 @@ describe("submission API storage", () => {
   });
 });
 
+describe("session API storage", () => {
+  it("loads owned sessions", async () => {
+    const payload: AssessmentSessionRecord[] = [];
+    mockJsonResponse(payload);
+
+    await expect(loadOwnedSessions()).resolves.toEqual(payload);
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      "/api/sessions",
+      expect.objectContaining({ headers: expect.any(Object) }),
+    );
+  });
+
+  it("loads session by code", async () => {
+    const payload: AssessmentSessionRecord = {
+      id: "sess-1",
+      code: "TEAM42",
+      name: "Architecture Review",
+      ownerEmail: "owner@test.com",
+      createdAt: new Date().toISOString(),
+      isOwner: true,
+    };
+    mockJsonResponse(payload);
+
+    await expect(getSessionByCode("TEAM42")).resolves.toEqual(payload);
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      "/api/sessions?code=TEAM42",
+      expect.objectContaining({ headers: expect.any(Object) }),
+    );
+  });
+
+  it("creates a team session", async () => {
+    const payload: AssessmentSessionRecord = {
+      id: "sess-2",
+      code: "ABC123",
+      name: "Quarterly Review",
+      ownerEmail: "owner@test.com",
+      createdAt: new Date().toISOString(),
+      isOwner: true,
+    };
+    mockJsonResponse(payload, true, 201);
+
+    await expect(createAssessmentSession("Quarterly Review")).resolves.toEqual(payload);
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      "/api/sessions",
+      expect.objectContaining({
+        method: "POST",
+        body: JSON.stringify({ name: "Quarterly Review" }),
+      }),
+    );
+  });
+
+  it("deletes a team session", async () => {
+    mockJsonResponse({ ok: true });
+
+    await deleteAssessmentSession("sess-2");
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      "/api/sessions",
+      expect.objectContaining({
+        method: "DELETE",
+        body: JSON.stringify({ id: "sess-2" }),
+      }),
+    );
+  });
+});
+
 describe("last result API storage", () => {
   it("saves last result", async () => {
     mockJsonResponse({ ok: true });
@@ -162,7 +247,7 @@ describe("last result API storage", () => {
       "/api/last-result",
       expect.objectContaining({
         method: "PUT",
-        body: JSON.stringify({ result: makeResult(2) }),
+        body: JSON.stringify({ result: makeResult(2), sessionKey: "personal" }),
       }),
     );
   });

@@ -53,9 +53,21 @@ export interface AssessmentResult {
 export interface SubmissionRecord {
   id: string;
   email: string;
+  sessionId?: string | null;
+  sessionCode?: string | null;
+  sessionName?: string | null;
   answers: AnswerMap;
   result: AssessmentResult;
   submittedAt: string;
+}
+
+export interface AssessmentSessionRecord {
+  id: string;
+  code: string;
+  name: string;
+  ownerEmail: string;
+  createdAt: string;
+  isOwner: boolean;
 }
 
 export interface TeamStats {
@@ -69,6 +81,7 @@ export interface TeamStats {
 
 export interface LastResultRecord {
   email: string;
+  sessionKey: string;
   result: AssessmentResult;
   savedAt: string;
 }

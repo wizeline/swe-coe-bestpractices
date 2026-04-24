@@ -2,9 +2,14 @@ import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { DashboardView } from "@/components/assessment/DashboardView";
 
-export default async function DashboardPage() {
+interface DashboardPageProps {
+  searchParams: Promise<{ session?: string }>;
+}
+
+export default async function DashboardPage({ searchParams }: DashboardPageProps) {
   const session = await auth();
   const userEmail = session?.user?.email;
+  const params = await searchParams;
 
   if (!userEmail) {
     redirect("/login?callbackUrl=/dashboard");
@@ -14,9 +19,9 @@ export default async function DashboardPage() {
     <section className="page-container">
       <div className="page-header">
         <h1>Best Practices Framework Assessment Results</h1>
-        <p>Review your latest assessment results and recommended actions.</p>
+        <p>Review your latest assessment results, manage team sessions, and see team reports for sessions you own.</p>
       </div>
-      <DashboardView userEmail={userEmail} />
+      <DashboardView userEmail={userEmail} initialSessionCode={params.session?.toUpperCase() ?? null} />
     </section>
   );
 }

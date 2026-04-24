@@ -9,14 +9,23 @@ async function getSessionEmail(): Promise<string | null> {
   return session?.user?.email?.toLowerCase().trim() ?? null;
 }
 
-export async function GET() {
+function getSessionKey(value?: string | null): string {
+  return value?.trim() || "personal";
+}
+
+export async function GET(request: Request) {
   const email = await getSessionEmail();
 
   if (!email) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const record = await prisma.lastResult.findUnique({ where: { email } });
+  const { searchParams } = new URL(request.url);
+  const sessionKey = getSessionKey(searchParams.get("sessionKey"));
+
+  const record = await prisma.lastResult.findUnique({
+    where: { email_sessionKey: { email, sessionKey } },
+  });
 
   if (!record) {
     return NextResponse.json({ data: null });
@@ -24,6 +33,7 @@ export async function GET() {
 
   const data: LastResultRecord = {
     email: record.email,
+    sessionKey: record.sessionKey,
     result: record.result as unknown as AssessmentResult,
     savedAt: record.savedAt.toISOString(),
   };
@@ -39,19 +49,23 @@ export async function PUT(request: Request) {
 
   const body = (await request.json()) as {
     result?: AssessmentResult;
+    sessionKey?: string;
   };
 
   if (!email || !body.result) {
     return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
   }
 
+  const sessionKey = getSessionKey(body.sessionKey);
+
   await prisma.lastResult.upsert({
-    where: { email },
+    where: { email_sessionKey: { email, sessionKey } },
     update: {
       result: body.result as unknown as Prisma.JsonObject,
     },
     create: {
       email,
+      sessionKey,
       result: body.result as unknown as Prisma.JsonObject,
     },
   });

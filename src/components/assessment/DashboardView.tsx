@@ -1,16 +1,47 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getLatestSubmissionByEmail } from "@/lib/storage";
-import { AssessmentResult, SubmissionRecord } from "@/types/assessment";
+import { useRouter } from "next/navigation";
+import { assessmentTemplate } from "@/data/assessmentTemplate";
+import {
+  buildTeamStats,
+  createAssessmentSession,
+  deleteAssessmentSession,
+  getLatestSubmissionByEmail,
+  getSessionByCode,
+  loadOwnedSessions,
+  loadTeamSubmissions,
+} from "@/lib/storage";
+import { AssessmentResult, AssessmentSessionRecord, SubmissionRecord, TeamStats } from "@/types/assessment";
 
 interface DashboardViewProps {
   userEmail: string;
+  initialSessionCode: string | null;
 }
 
-export function DashboardView({ userEmail }: DashboardViewProps) {
+const emptyTeamStats: TeamStats = {
+  totalSubmissions: 0,
+  uniqueParticipants: 0,
+  averageTotalScore: 0,
+  maxTotalScore: 0,
+  categoryAverages: {},
+  submissionsByEmail: {},
+};
+
+export function DashboardView({ userEmail, initialSessionCode }: DashboardViewProps) {
+  const router = useRouter();
   const [userSubmission, setUserSubmission] = useState<SubmissionRecord | null>(null);
+  const [teamStats, setTeamStats] = useState<TeamStats>(emptyTeamStats);
+  const [ownedSessions, setOwnedSessions] = useState<AssessmentSessionRecord[]>([]);
+  const [selectedSession, setSelectedSession] = useState<AssessmentSessionRecord | null>(null);
+  const [newSessionName, setNewSessionName] = useState("");
+  const [joinSessionCode, setJoinSessionCode] = useState("");
+  const [sessionError, setSessionError] = useState("");
+  const [joinSessionError, setJoinSessionError] = useState("");
+  const [isCreatingSession, setIsCreatingSession] = useState(false);
+  const [deletingSessionId, setDeletingSessionId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const canShowTeamView = Boolean(selectedSession?.isOwner);
 
   useEffect(() => {
     let active = true;
@@ -18,14 +49,32 @@ export function DashboardView({ userEmail }: DashboardViewProps) {
     async function fetchData() {
       setIsLoading(true);
       try {
-        const latest = await getLatestSubmissionByEmail();
+        const [sessions, sessionRecord, latest] = await Promise.all([
+          loadOwnedSessions(),
+          initialSessionCode ? getSessionByCode(initialSessionCode) : Promise.resolve(null),
+          getLatestSubmissionByEmail(initialSessionCode ?? undefined),
+        ]);
+
+        let nextTeamStats = emptyTeamStats;
+        if (initialSessionCode && sessionRecord?.isOwner) {
+          const teamSubmissions = await loadTeamSubmissions(initialSessionCode);
+          nextTeamStats = buildTeamStats(teamSubmissions);
+        }
+
         if (active) {
+          setOwnedSessions(sessions);
+          setSelectedSession(sessionRecord);
           setUserSubmission(latest);
+          setTeamStats(nextTeamStats);
+          setSessionError(initialSessionCode && !sessionRecord ? "Session not found." : "");
         }
       } catch (error) {
         console.error("Dashboard load error:", error);
         if (active) {
           setUserSubmission(null);
+          setSelectedSession(null);
+          setOwnedSessions([]);
+          setTeamStats(emptyTeamStats);
         }
       } finally {
         if (active) {
@@ -39,7 +88,61 @@ export function DashboardView({ userEmail }: DashboardViewProps) {
     return () => {
       active = false;
     };
-  }, []);
+  }, [initialSessionCode]);
+
+  const handleCreateSession = async () => {
+    if (!newSessionName.trim()) {
+      setSessionError("Session name is required.");
+      return;
+    }
+
+    setIsCreatingSession(true);
+    setSessionError("");
+    try {
+      const created = await createAssessmentSession(newSessionName.trim());
+      router.push(`/dashboard?session=${encodeURIComponent(created.code)}`);
+    } catch (error) {
+      console.error("Session create error:", error);
+      setSessionError("Failed to create session. Please try again.");
+      setIsCreatingSession(false);
+    }
+  };
+
+  const handleJoinSession = () => {
+    const trimmed = joinSessionCode.trim().toUpperCase();
+    if (!trimmed) {
+      setJoinSessionError("Enter a session code.");
+      return;
+    }
+
+    setJoinSessionError("");
+    router.push(`/dashboard?session=${encodeURIComponent(trimmed)}`);
+  };
+
+  const handleDeleteSession = async (session: AssessmentSessionRecord) => {
+    const shouldDelete = window.confirm(`Delete session \"${session.name}\"? This cannot be undone.`);
+    if (!shouldDelete) {
+      return;
+    }
+
+    setSessionError("");
+    setDeletingSessionId(session.id);
+
+    try {
+      await deleteAssessmentSession(session.id);
+      setOwnedSessions((current) => current.filter((item) => item.id !== session.id));
+
+      if (selectedSession?.id === session.id) {
+        router.push("/dashboard");
+        return;
+      }
+    } catch (error) {
+      console.error("Session delete error:", error);
+      setSessionError("Failed to delete session. Please try again.");
+    } finally {
+      setDeletingSessionId(null);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -49,25 +152,217 @@ export function DashboardView({ userEmail }: DashboardViewProps) {
     );
   }
 
-  if (!userSubmission) {
+  if (!userSubmission && !canShowTeamView) {
     return (
-      <div className="card form-card">
-        <p>No assessment data found for your account yet.</p>
-        <div className="empty-actions">
-          <a href="/assessment" className="button solid">
-            Go to Assessment Form
-          </a>
+      <div className="dashboard-shell">
+        <SessionHub
+          ownedSessions={ownedSessions}
+          onDeleteSession={handleDeleteSession}
+          deletingSessionId={deletingSessionId}
+          joinSessionCode={joinSessionCode}
+          onJoinSessionCodeChange={(value) => {
+            setJoinSessionCode(value);
+            setJoinSessionError("");
+          }}
+          onJoinSession={handleJoinSession}
+          newSessionName={newSessionName}
+          onNewSessionNameChange={setNewSessionName}
+          onCreateSession={handleCreateSession}
+          isCreatingSession={isCreatingSession}
+          sessionError={sessionError}
+          joinSessionError={joinSessionError}
+        />
+        <div className="card form-card empty-state-card">
+          <div className="empty-state-option">
+            <div>
+              <strong>Individual assessment</strong>
+              <p>Complete the assessment on your own without a session.</p>
+            </div>
+            <a href="/assessment" className="button solid">
+              Start assessment
+            </a>
+          </div>
         </div>
       </div>
     );
   }
 
-  return <ScoreCard result={userSubmission.result} email={userEmail} />;
+  return (
+    <div className="dashboard-shell">
+      <SessionHub
+        ownedSessions={ownedSessions}
+        selectedSession={selectedSession}
+        onDeleteSession={handleDeleteSession}
+        deletingSessionId={deletingSessionId}
+        joinSessionCode={joinSessionCode}
+        onJoinSessionCodeChange={(value) => {
+          setJoinSessionCode(value);
+          setJoinSessionError("");
+        }}
+        onJoinSession={handleJoinSession}
+        newSessionName={newSessionName}
+        onNewSessionNameChange={setNewSessionName}
+        onCreateSession={handleCreateSession}
+        isCreatingSession={isCreatingSession}
+        sessionError={sessionError}
+        joinSessionError={joinSessionError}
+      />
+      {canShowTeamView && selectedSession ? (
+        <TeamView stats={teamStats} selectedSession={selectedSession} />
+      ) : userSubmission ? (
+        <ScoreCard result={userSubmission.result} email={userEmail} />
+      ) : null}
+    </div>
+  );
+}
+
+interface SessionHubProps {
+  ownedSessions: AssessmentSessionRecord[];
+  selectedSession?: AssessmentSessionRecord | null;
+  onDeleteSession: (session: AssessmentSessionRecord) => Promise<void>;
+  deletingSessionId: string | null;
+  joinSessionCode: string;
+  onJoinSessionCodeChange: (value: string) => void;
+  onJoinSession: () => void;
+  newSessionName: string;
+  onNewSessionNameChange: (value: string) => void;
+  onCreateSession: () => void;
+  isCreatingSession: boolean;
+  sessionError: string;
+  joinSessionError: string;
+}
+
+function SessionHub({
+  ownedSessions,
+  selectedSession,
+  onDeleteSession,
+  deletingSessionId,
+  joinSessionCode,
+  onJoinSessionCodeChange,
+  onJoinSession,
+  newSessionName,
+  onNewSessionNameChange,
+  onCreateSession,
+  isCreatingSession,
+  sessionError,
+  joinSessionError,
+}: SessionHubProps) {
+  return (
+    <section className="card results-content-card session-hub-card">
+      <div className="session-hub-header">
+        <div>
+          <h3>Team Sessions</h3>
+          <p>Join with a session code, or create your own voting session for the team.</p>
+        </div>
+      </div>
+
+      <div className="session-list-heading">Join with code</div>
+      <div className="session-create-row">
+        <input
+          value={joinSessionCode}
+          onChange={(event) => onJoinSessionCodeChange(event.target.value)}
+          onKeyDown={(event) => {
+            if (event.key === "Enter") {
+              onJoinSession();
+            }
+          }}
+          placeholder="e.g. A1B2C3"
+          aria-label="Session code"
+          style={{ textTransform: "uppercase" }}
+        />
+        <button type="button" className="button solid" onClick={onJoinSession}>
+          Join session
+        </button>
+      </div>
+      {joinSessionError && <p className="form-error">{joinSessionError}</p>}
+
+      <div className="session-list-heading session-subsection-spacing">Create new session</div>
+      <div className="session-create-row">
+        <input
+          value={newSessionName}
+          onChange={(event) => onNewSessionNameChange(event.target.value)}
+          placeholder="Quarterly Architecture Review"
+          aria-label="Session name"
+        />
+        <button type="button" className="button solid" onClick={onCreateSession} disabled={isCreatingSession}>
+          {isCreatingSession ? "Creating…" : "Create Session"}
+        </button>
+      </div>
+      {sessionError && <p className="form-error">{sessionError}</p>}
+
+      {ownedSessions.length > 0 && (
+        <div className="session-list">
+          <p className="session-list-heading">Your sessions</p>
+          {ownedSessions.map((session) => (
+            <article key={session.id} className={`session-list-item ${selectedSession?.code === session.code ? "session-list-item--active" : ""}`}>
+              <div>
+                <strong>{session.name}</strong>
+                <span className="session-code-badge">{session.code}</span>
+              </div>
+              <div className="session-list-actions">
+                <a href={`/assessment?session=${encodeURIComponent(session.code)}`} className="button ghost">
+                  Voting link
+                </a>
+                <a href={`/dashboard?session=${encodeURIComponent(session.code)}`} className="button solid">
+                  Team report
+                </a>
+                <button
+                  type="button"
+                  className="button ghost"
+                  onClick={() => {
+                    void onDeleteSession(session);
+                  }}
+                  disabled={deletingSessionId === session.id}
+                >
+                  {deletingSessionId === session.id ? "Deleting..." : "Delete"}
+                </button>
+              </div>
+            </article>
+          ))}
+        </div>
+      )}
+    </section>
+  );
 }
 
 interface ScoreCardProps {
   result: AssessmentResult;
   email: string;
+}
+
+function SessionCodeInput() {
+  const router = useRouter();
+  const [code, setCode] = useState("");
+  const [error, setError] = useState("");
+
+  const handleJoin = () => {
+    const trimmed = code.trim().toUpperCase();
+    if (!trimmed) {
+      setError("Enter a session code.");
+      return;
+    }
+    router.push(`/dashboard?session=${encodeURIComponent(trimmed)}`);
+  };
+
+  return (
+    <div>
+      <div className="session-create-row">
+        <input
+          value={code}
+          onChange={(e) => { setCode(e.target.value); setError(""); }}
+          onKeyDown={(e) => e.key === "Enter" && handleJoin()}
+          placeholder="e.g. A1B2C3"
+          aria-label="Session code"
+          maxLength={10}
+          style={{ textTransform: "uppercase" }}
+        />
+        <button type="button" className="button solid" onClick={handleJoin}>
+          Join session
+        </button>
+      </div>
+      {error && <p className="form-error">{error}</p>}
+    </div>
+  );
 }
 
 function ScoreCard({ result, email }: ScoreCardProps) {
@@ -140,6 +435,109 @@ function ScoreCard({ result, email }: ScoreCardProps) {
           )}
         </section>
       </article>
+
+      <article className="card results-content-card">
+        <SessionCodeInput />
+      </article>
+    </div>
+  );
+}
+
+interface TeamViewProps {
+  stats: TeamStats;
+  selectedSession: AssessmentSessionRecord;
+}
+
+function TeamView({ stats, selectedSession }: TeamViewProps) {
+  return (
+    <div>
+      <div className="team-session-banner card form-card">
+        <div className="team-session-banner-copy">
+          <h3>{selectedSession.name}</h3>
+          <p>
+            Session code <strong>{selectedSession.code}</strong>. Share <a href={`/assessment?session=${encodeURIComponent(selectedSession.code)}`}>this voting link</a> with your team.
+          </p>
+        </div>
+        <a href="/dashboard" className="button ghost">
+          Back to dashboard
+        </a>
+      </div>
+
+      <div className="view-toggle">
+        <button className="toggle-btn active">Team Overview ({stats.uniqueParticipants} people)</button>
+      </div>
+
+      <div className="team-view">
+        <div className="dashboard-grid team-dashboard-grid">
+          <article className="card team-summary">
+            <h3>Team Summary</h3>
+            <div className="summary-stats">
+              <div className="stat-item">
+                <span className="stat-label">Team Average Score</span>
+                <span className="stat-value">{stats.averageTotalScore.toFixed(1)}/{stats.maxTotalScore}</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-label">Participants</span>
+                <span className="stat-value">{stats.uniqueParticipants}</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-label">Total Responses</span>
+                <span className="stat-value">{stats.totalSubmissions}</span>
+              </div>
+            </div>
+          </article>
+
+          <article className="card category-average-card">
+            <section className="score-breakdown">
+              <h3>Average by Category</h3>
+              {assessmentTemplate.categories.map((category) => {
+                const avgScore = stats.categoryAverages[category.id] ?? 0;
+                return (
+                  <div key={category.id} className="breakdown-row">
+                    <span>{category.title}</span>
+                    <strong>{avgScore.toFixed(1)}</strong>
+                  </div>
+                );
+              })}
+            </section>
+          </article>
+        </div>
+
+        <div className="submissions-table">
+          <h3>Individual Submissions</h3>
+          <div className="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Email</th>
+                  <th>Overall Score</th>
+                  <th>Completion</th>
+                  <th>Status</th>
+                  <th>Submitted</th>
+                </tr>
+              </thead>
+              <tbody>
+                {Object.entries(stats.submissionsByEmail).map(([emailAddr, submissions]) => {
+                  const latest = submissions[submissions.length - 1];
+                  return (
+                    <tr key={emailAddr}>
+                      <td>{emailAddr}</td>
+                      <td className="score-cell">
+                        <strong>{latest.result.totalScore}/{latest.result.maxScore}</strong>
+                      </td>
+                      <td>{latest.result.completion}%</td>
+                      <td>
+                        <span className="status-badge">{latest.result.maturityLabel}</span>
+                      </td>
+                      <td className="date-cell">{new Date(latest.submittedAt).toLocaleDateString()}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

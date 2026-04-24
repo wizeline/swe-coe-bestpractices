@@ -16,8 +16,8 @@ Internal Next.js tool for assessing engineering maturity. Developers score 14 pr
 | ----- | ------- |
 | / | Redirects based on auth state |
 | /login | Google sign-in page |
-| /assessment | 14-question self-assessment form (auth required) |
-| /dashboard | Latest personal result for logged-in user (auth required) |
+| /assessment | Individual or team-session voting form (auth required) |
+| /dashboard | Personal results + owned team session reports (auth required) |
 
 ## Scoring Scale
 
@@ -111,9 +111,12 @@ src/
 
 Prisma models:
 
+- AssessmentSession: owner-created team voting sessions with shareable codes
 - Submission: completed assessments
-- Draft: in-progress answers by email
-- LastResult: latest result snapshot by email
+- Draft: in-progress answers by email and session key
+- LastResult: latest result snapshot by email and session key
+
+Session owners can create and delete their own AssessmentSession records from the dashboard.
 
 All assessment data is scoped to the authenticated session email on the server.
 Client components should use src/lib/storage.ts. Do not call Prisma directly from client-side code.
@@ -132,3 +135,9 @@ npm run build
 - Domain types: src/types/assessment.ts
 - Scoring logic: src/lib/scoring.ts
 - Agent/contributor rules: AGENTS.md
+
+## Future Proposals
+
+- **Cross-team comparison view** — an admin-only page that loads all `AssessmentSession` records, runs `buildTeamStats()` per session, and renders a side-by-side maturity comparison across teams. The data model already supports this; only a protected `/api/admin/sessions` endpoint and a comparison UI are needed.
+- **Session invite by email** — let owners invite specific users to a session instead of sharing a public link.
+- **Historical trend charts** — plot a team's average score over time when a session is run repeatedly.

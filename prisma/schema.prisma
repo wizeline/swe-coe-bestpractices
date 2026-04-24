@@ -10,21 +10,41 @@ datasource db {
 model Submission {
   id          String   @id @default(cuid())
   email       String
+  sessionId   String?
   answers     Json
   result      Json
   submittedAt DateTime @default(now())
+  session     AssessmentSession? @relation(fields: [sessionId], references: [id], onDelete: SetNull)
 
   @@index([email, submittedAt])
+  @@index([sessionId, submittedAt])
 }
 
 model Draft {
-  email     String   @id
-  answers   Json
-  updatedAt DateTime @updatedAt
+  email      String
+  sessionKey String   @default("personal")
+  answers    Json
+  updatedAt  DateTime @updatedAt
+
+  @@id([email, sessionKey])
 }
 
 model LastResult {
-  email   String   @id
-  result  Json
-  savedAt DateTime @updatedAt
+  email      String
+  sessionKey String   @default("personal")
+  result     Json
+  savedAt    DateTime @updatedAt
+
+  @@id([email, sessionKey])
+}
+
+model AssessmentSession {
+  id         String       @id @default(cuid())
+  code       String       @unique
+  name       String
+  ownerEmail String
+  createdAt  DateTime     @default(now())
+  submissions Submission[]
+
+  @@index([ownerEmail, createdAt])
 }

@@ -44,9 +44,6 @@ export default async function RootLayout({
               {userEmail ? (
                 <>
                   <li>
-                    <Link href="/assessment">Assessment</Link>
-                  </li>
-                  <li>
                     <Link href="/dashboard">Dashboard</Link>
                   </li>
                   <li>

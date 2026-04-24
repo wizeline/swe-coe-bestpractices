@@ -1112,6 +1112,268 @@ body {
   border-left: 3px solid var(--brand-primary);
 }
 
+/* Dashboard shell — wraps session hub + score/team view */
+.dashboard-shell {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(16px, 2vw, 24px);
+}
+
+/* Session hub card */
+.session-hub-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.session-hub-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--brand-primary), #ff7c74);
+}
+
+.session-hub-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.session-hub-header h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.session-hub-header p {
+  color: var(--text-dim);
+  font-size: 0.88rem;
+  line-height: 1.5;
+  max-width: 52ch;
+}
+
+/* Create session row */
+.session-create-row {
+  display: flex;
+  gap: 10px;
+  align-items: stretch;
+}
+
+.session-create-row input {
+  flex: 1;
+  min-height: 44px;
+  border-radius: 12px;
+  border: 1px solid var(--surface-stroke);
+  background: var(--bg-soft);
+  color: var(--text);
+  font-size: 0.94rem;
+  padding: 0 14px;
+  outline: none;
+  font-family: inherit;
+  transition: border-color 200ms ease, box-shadow 200ms ease, background 200ms ease;
+}
+
+.session-create-row input:focus {
+  border-color: var(--brand-primary);
+  box-shadow: 0 0 0 3px rgba(227, 44, 39, 0.12);
+  background: #fff;
+}
+
+.session-create-row input::placeholder {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* Session list */
+.session-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+  padding-top: 18px;
+  border-top: 1px solid var(--surface-stroke);
+}
+
+.session-list-heading {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin-bottom: 4px;
+}
+
+.session-subsection-spacing {
+  margin-top: 18px;
+}
+
+.session-list-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--surface-stroke);
+  background: var(--bg-soft);
+  transition: border-color 200ms ease, background 200ms ease, box-shadow 200ms ease;
+}
+
+.session-list-item:hover {
+  border-color: rgba(227, 44, 39, 0.25);
+  background: rgba(227, 44, 39, 0.02);
+}
+
+.session-list-item--active {
+  border-color: var(--brand-primary);
+  background: rgba(227, 44, 39, 0.04);
+  box-shadow: 0 0 0 3px rgba(227, 44, 39, 0.08);
+}
+
+.session-list-item > div:first-child {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.session-list-item strong {
+  font-size: 0.95rem;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.session-code-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 9px;
+  border-radius: 8px;
+  font-size: 0.73rem;
+  font-family: var(--font-mono), monospace;
+  font-weight: 600;
+  background: rgba(227, 44, 39, 0.1);
+  color: var(--brand-primary);
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
+}
+
+.session-list-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+  align-items: center;
+}
+
+.session-list-actions .button {
+  text-decoration: none;
+  min-height: 36px;
+  padding: 0 14px;
+  font-size: 0.78rem;
+}
+
+/* Empty state card (no assessment yet) */
+.empty-state-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 0;
+}
+
+.empty-state-option {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: clamp(22px, 2.8vw, 32px);
+}
+
+.empty-state-option > div > strong {
+  display: block;
+  font-size: clamp(1.02rem, 0.35vw + 0.95rem, 1.18rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+}
+
+.empty-state-option > div > p {
+  color: var(--text-dim);
+  font-size: clamp(0.98rem, 0.35vw + 0.9rem, 1.12rem);
+  line-height: 1.5;
+  max-width: 60ch;
+}
+
+.empty-state-option > a.button,
+.empty-state-option > .button {
+  align-self: flex-start;
+  text-decoration: none;
+  min-width: 220px;
+}
+
+.empty-state-divider {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 clamp(22px, 2.8vw, 32px);
+  color: var(--text-muted);
+  font-size: 0.74rem;
+  font-family: var(--font-mono), monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.empty-state-divider::before,
+.empty-state-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--surface-stroke);
+}
+
+/* Team session banner */
+.team-session-banner {
+  margin-bottom: 24px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.team-session-banner h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.team-session-banner-copy {
+  max-width: 70ch;
+}
+
+.team-session-banner p {
+  color: var(--text-dim);
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.team-session-banner a {
+  color: var(--brand-primary);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.team-session-banner a:hover {
+  text-decoration: underline;
+}
+
+.team-session-banner > .button {
+  text-decoration: none;
+  white-space: nowrap;
+}
+
 /* View toggle for team/individual */
 .view-toggle {
   display: flex;
@@ -1353,6 +1615,16 @@ table tbody tr:last-child td {
   .toggle-btn {
     flex: 1;
     min-width: 120px;
+  }
+
+  .empty-state-option > a.button,
+  .empty-state-option > .button {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .session-create-row > .button {
+    width: 100%;
   }
 
   .summary-stats {
