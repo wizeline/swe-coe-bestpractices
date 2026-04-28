@@ -10,13 +10,14 @@ export const assessmentTemplate: AssessmentModel = {
     {
       id: "pillar-1-ideation",
       title: "Pillar 1 – Ideation & Requirements",
-      description: "Intent Engineering: how rigorously you capture, structure, and trace requirements before writing code.",
+      description:
+        "Intent Engineering: how rigorously you capture, structure, and trace requirements before writing code.",
       weight: 0.2,
       questions: [
         {
           id: "p1-q1",
           text: "How do you document the requirements?",
-          hint: "1 = I am building based on verbal cues or vague notes without a formal standard. · 2 = I am writing a basic summary of the features in the ticket. · 3 = I am writing a formal Technical Spec with Gherkin-style Acceptance Criteria manually. · 4 = I am using an Agent to normalize raw client inputs into a structured \"Super-Spec.\"",
+          hint: '1 = I am building based on verbal cues or vague notes without a formal standard. · 2 = I am writing a basic summary of the features in the ticket. · 3 = I am writing a formal Technical Spec with Gherkin-style Acceptance Criteria manually. · 4 = I am using an Agent to normalize raw client inputs into a structured "Super-Spec."',
         },
         {
           id: "p1-q2",
@@ -56,7 +57,8 @@ export const assessmentTemplate: AssessmentModel = {
     {
       id: "pillar-2-design",
       title: "Pillar 2 – Design & Architecture",
-      description: "Systematic Planning: how deliberately you design solutions, reuse patterns, and assess security before implementation.",
+      description:
+        "Systematic Planning: how deliberately you design solutions, reuse patterns, and assess security before implementation.",
       weight: 0.2,
       questions: [
         {
@@ -72,7 +74,7 @@ export const assessmentTemplate: AssessmentModel = {
         {
           id: "p2-q6",
           text: "Do you evaluate security risks?",
-          hint: "1 = I am assuming the system handles security and am not performing a specific review. · 2 = I am keeping general security principles in mind while designing. · 3 = I am performing a manual \"Threat Modeling\" session for the data flow. · 4 = I am using an AI security scanner to detect vulnerabilities in the design phase.",
+          hint: '1 = I am assuming the system handles security and am not performing a specific review. · 2 = I am keeping general security principles in mind while designing. · 3 = I am performing a manual "Threat Modeling" session for the data flow. · 4 = I am using an AI security scanner to detect vulnerabilities in the design phase.',
         },
       ],
       recommendations: [
@@ -102,13 +104,14 @@ export const assessmentTemplate: AssessmentModel = {
     {
       id: "pillar-3-development",
       title: "Pillar 3 – Development",
-      description: "Implementation Hygiene: how clean, traceable, and well-documented your code changes are.",
+      description:
+        "Implementation Hygiene: how clean, traceable, and well-documented your code changes are.",
       weight: 0.2,
       questions: [
         {
           id: "p3-q7",
           text: "Are your Pull Requests (PRs) manageable?",
-          hint: "1 = I am submitting large, multi-feature Pull Requests that are hard to review. · 2 = I am keeping my PR focused on the assigned task. · 3 = I am enforcing a strict <200 LOC limit and single-responsibility \"slices.\" · 4 = I am using an Agent to split complex tasks into atomic, generated sub-commits.",
+          hint: '1 = I am submitting large, multi-feature Pull Requests that are hard to review. · 2 = I am keeping my PR focused on the assigned task. · 3 = I am enforcing a strict <200 LOC limit and single-responsibility "slices." · 4 = I am using an Agent to split complex tasks into atomic, generated sub-commits.',
         },
         {
           id: "p3-q8",
@@ -118,7 +121,7 @@ export const assessmentTemplate: AssessmentModel = {
         {
           id: "p3-q9",
           text: "Is your documentation live?",
-          hint: "1 = I am leaving documentation for later or relying on others to update it. · 2 = I am updating the README file after I finish writing the code. · 3 = I am updating READMEs and ADRs in the same commit as the code (Docs-as-Code). · 4 = I am using a \"Docs-as-Code\" agent to auto-refresh diagrams and references.",
+          hint: '1 = I am leaving documentation for later or relying on others to update it. · 2 = I am updating the README file after I finish writing the code. · 3 = I am updating READMEs and ADRs in the same commit as the code (Docs-as-Code). · 4 = I am using a "Docs-as-Code" agent to auto-refresh diagrams and references.',
         },
       ],
       recommendations: [
@@ -148,23 +151,24 @@ export const assessmentTemplate: AssessmentModel = {
     {
       id: "pillar-4-quality",
       title: "Pillar 4 – Quality Engineering",
-      description: "Validation & Reliability: how thoroughly you test, audit, and protect against regressions.",
+      description:
+        "Validation & Reliability: how thoroughly you test, audit, and protect against regressions.",
       weight: 0.2,
       questions: [
         {
           id: "p4-q10",
           text: "Do you find the hidden bugs?",
-          hint: "1 = I am not writing automated tests for this specific task. · 2 = I am writing Unit Tests for the main \"Happy Path.\" · 3 = I am using a Manual Checklist to write tests for Nulls, Bounds, and Errors. · 4 = I am using a QA agent to discover non-obvious edge cases and generate coverage.",
+          hint: '1 = I am not writing automated tests for this specific task. · 2 = I am writing Unit Tests for the main "Happy Path." · 3 = I am using a Manual Checklist to write tests for Nulls, Bounds, and Errors. · 4 = I am using a QA agent to discover non-obvious edge cases and generate coverage.',
         },
         {
           id: "p4-q11",
           text: "How do you verify the output?",
-          hint: "1 = I am merging code as soon as the build passes without human review. · 2 = I am requesting a standard peer review from a teammate. · 3 = I am performing a \"Protocol Audit\" (manual line-by-line check) of my logic. · 4 = I am using a \"Verifier\" agent to audit code against the spec before human review.",
+          hint: '1 = I am merging code as soon as the build passes without human review. · 2 = I am requesting a standard peer review from a teammate. · 3 = I am performing a "Protocol Audit" (manual line-by-line check) of my logic. · 4 = I am using a "Verifier" agent to audit code against the spec before human review.',
         },
         {
           id: "p4-q12",
           text: "Do you handle legacy regressions?",
-          hint: "1 = I am ignoring old broken tests or bypassing them to finish my task. · 2 = I am fixing any old tests that I break during the task. · 3 = I am manually refactoring and cleaning \"Test Debt\" in the affected modules. · 4 = I am using an agent to automatically repair the legacy test suite in the background.",
+          hint: '1 = I am ignoring old broken tests or bypassing them to finish my task. · 2 = I am fixing any old tests that I break during the task. · 3 = I am manually refactoring and cleaning "Test Debt" in the affected modules. · 4 = I am using an agent to automatically repair the legacy test suite in the background.',
         },
       ],
       recommendations: [
@@ -194,7 +198,8 @@ export const assessmentTemplate: AssessmentModel = {
     {
       id: "pillar-5-operations",
       title: "Pillar 5 – Operations & Maintenance",
-      description: "Observability: how easy it is to debug, hand off, and operate the system you built.",
+      description:
+        "Observability: how easy it is to debug, hand off, and operate the system you built.",
       weight: 0.2,
       questions: [
         {
