@@ -97,7 +97,7 @@ export const assessmentTemplate: AssessmentModel = {
           maxScoreInclusive: 36,
           title: "Adopt AI-assisted design validation",
           action:
-            "Query AI for reusable components and vulnerabilities. Example: Feed your proposed database schema into an AI agent and ask it to find SQL injection vulnerabilities or missing indexes.",
+            "Query AI for reusable components and design risks. Example: Feed your proposed database schema into an AI agent to find missing indexes, or feed your API sequence diagram to detect missing authentication layers.",
         },
       ],
     },
@@ -130,7 +130,7 @@ export const assessmentTemplate: AssessmentModel = {
           maxScoreInclusive: 12,
           title: "Keep PRs focused and update docs",
           action:
-            "Scope each PR to a single concern. Example: If you notice a typo in another file, ignore it or make a separate PR for it. Don't mix it into your current feature PR.",
+            "Scope each PR to a single concern. Example: If you notice a typo in an unrelated file, fix it in a separate PR (or a clearly isolated commit) rather than tangling it with your current feature's code.",
         },
         {
           id: "p3-r2",
