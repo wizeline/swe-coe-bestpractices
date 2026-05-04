@@ -1,5 +1,6 @@
 import { assessmentTemplate } from "@/data/assessmentTemplate";
 import { SubmissionRecord, TeamStats } from "@/types/assessment";
+import { MAX_RECOMMENDATIONS_PER_PILLAR } from "@/lib/config";
 
 function getTotalScore(submission: SubmissionRecord): number {
   return submission.totalScore ?? submission.result.totalScore;
@@ -45,7 +46,7 @@ export function buildTeamStats(submissions: SubmissionRecord[]): TeamStats {
         ? [...categoryTemplate.recommendations]
           .sort((a, b) => a.maxScoreInclusive - b.maxScoreInclusive)
           .filter((item) => averageScore <= item.maxScoreInclusive)
-          .slice(0, 2)
+          .slice(0, MAX_RECOMMENDATIONS_PER_PILLAR)
         : [];
     }
   }

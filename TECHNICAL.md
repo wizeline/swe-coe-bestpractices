@@ -34,6 +34,10 @@ Required auth variables:
 
 `ADMIN_EMAILS` should be a comma-separated list of user emails allowed to access the `/admin` route.
 
+Optional configuration variables:
+
+- `NEXT_PUBLIC_MAX_RECOMMENDATIONS` (default: 1) — Number of action items to display per pillar in assessment results and team reports. Use `NEXT_PUBLIC_` prefix to make it accessible on the client.
+
 1. Start local PostgreSQL with Docker:
 
 ```bash
