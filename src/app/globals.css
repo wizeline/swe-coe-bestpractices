@@ -113,7 +113,7 @@ body {
 }
 
 .card {
-  border: 1px solid var(--surface-stroke);
+  border: none;
   background: var(--surface);
   border-radius: var(--radius-lg);
   overflow: hidden;
@@ -392,9 +392,9 @@ body {
   color: #444;
   line-height: 1.5;
   padding: 8px 12px;
-  border-left: 2px solid var(--surface-stroke);
+  border: 1px solid var(--surface-stroke);
   background: var(--surface);
-  border-radius: 0 6px 6px 0;
+  border-radius: 6px;
 }
 
 /* Hint bullets */
@@ -661,6 +661,19 @@ body {
   line-height: 1.35;
 }
 
+.suggestion-link {
+  display: inline-flex;
+  margin-top: 10px;
+  color: var(--brand-primary);
+  font-size: 0.8rem;
+  font-family: var(--font-mono), monospace;
+  text-decoration: none;
+}
+
+.suggestion-link:hover {
+  text-decoration: underline;
+}
+
 .actions {
   margin-top: 16px;
   display: grid;
@@ -859,6 +872,170 @@ body {
   color: var(--text-dim);
   max-width: 60ch;
   line-height: 1.6;
+}
+
+.dashboard-header,
+.tooling-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.dashboard-header-link,
+.tooling-header-link {
+  white-space: nowrap;
+}
+
+.tooling-page {
+  display: grid;
+  gap: 18px;
+}
+
+.tooling-intro-card,
+.tooling-empty-state,
+.tooling-card {
+  padding: clamp(20px, 3vw, 28px);
+}
+
+.tooling-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 20px;
+}
+
+.tooling-card {
+  display: grid;
+  gap: 20px;
+  background: linear-gradient(180deg, #ffffff 0%, #fcfbfb 100%);
+}
+
+.tooling-play-list {
+  display: grid;
+  gap: 18px;
+}
+
+.tooling-play {
+  display: grid;
+  gap: 14px;
+}
+
+.tooling-play-titlebar {
+  padding: 15px 18px;
+  border-radius: 16px 16px 0 0;
+  background: linear-gradient(110deg, var(--brand-primary) 0%, var(--brand-secondary) 85%);
+  color: #ffffff;
+}
+
+.tooling-play-titlebar h3 {
+  font-size: clamp(1rem, 0.9rem + 0.45vw, 1.25rem);
+}
+
+.tooling-play-intro {
+  margin-top: -6px;
+}
+
+.tooling-callout-list {
+  display: grid;
+  gap: 14px;
+}
+
+.tooling-callout {
+  border-radius: 16px;
+  padding: 18px 18px 16px;
+  border: 1px solid var(--surface-stroke);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.tooling-callout h4 {
+  margin-bottom: 10px;
+  color: var(--text);
+  font-size: 1rem;
+}
+
+.tooling-callout--do-this {
+  border-color: rgba(21, 87, 192, 0.4);
+  background: linear-gradient(180deg, #eef5ff 0%, #e6f0ff 100%);
+}
+
+.tooling-callout--why-it-works {
+  border-color: rgba(227, 44, 39, 0.28);
+  background: linear-gradient(180deg, #fff9f0 0%, #fff5e7 100%);
+}
+
+.tooling-callout--how-to {
+  border-color: rgba(227, 44, 39, 0.32);
+  background: linear-gradient(180deg, #f6f6f6 0%, #efefef 100%);
+}
+
+.tooling-card-header {
+  display: grid;
+  gap: 10px;
+}
+
+.tooling-card-header h2,
+.tooling-empty-state h2 {
+  font-size: clamp(1.2rem, 1vw + 0.9rem, 1.6rem);
+  line-height: 1.15;
+}
+
+.tooling-markdown {
+  display: grid;
+  gap: 14px;
+  color: var(--text-dim);
+}
+
+.tooling-markdown h3 {
+  color: var(--text);
+  font-size: 1.05rem;
+}
+
+.tooling-markdown h4 {
+  color: var(--text);
+  font-size: 0.96rem;
+}
+
+.tooling-markdown p,
+.tooling-markdown li {
+  line-height: 1.65;
+}
+
+.tooling-markdown ul,
+.tooling-markdown ol {
+  margin-left: 18px;
+  display: grid;
+  gap: 8px;
+}
+
+.tooling-markdown strong {
+  color: var(--text);
+}
+
+.tooling-callout .tooling-markdown strong {
+  color: var(--brand-primary);
+}
+
+.tooling-markdown code {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.92em;
+}
+
+.tooling-markdown pre {
+  overflow-x: auto;
+  padding: 14px;
+  border-radius: 16px;
+  background: #151515;
+  color: #f6f6f6;
+}
+
+.tooling-markdown pre code {
+  display: block;
+  white-space: pre-wrap;
+}
+
+.tooling-empty-state p {
+  margin-top: 10px;
+  color: var(--text-dim);
 }
 
 /* Login layout */
@@ -1131,7 +1308,7 @@ body {
   padding: 12px;
   border-radius: 8px;
   background: rgba(227, 44, 39, 0.05);
-  border-left: 3px solid var(--brand-primary);
+  border: 1px solid rgba(227, 44, 39, 0.18);
 }
 
 /* Dashboard shell — wraps session hub + score/team view */
@@ -1477,7 +1654,7 @@ body {
   padding: 16px;
   border-radius: 8px;
   background: rgba(227, 44, 39, 0.06);
-  border-left: 3px solid var(--brand-primary);
+  border: 1px solid rgba(227, 44, 39, 0.16);
 }
 
 .stat-label {
@@ -1730,6 +1907,15 @@ table tbody tr:last-child td {
   .shell {
     width: calc(100vw - 24px);
     padding: 22px 0 30px;
+  }
+
+  .dashboard-header,
+  .tooling-header {
+    flex-direction: column;
+  }
+
+  .tooling-grid {
+    grid-template-columns: 1fr;
   }
 
   .hero h1 {

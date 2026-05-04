@@ -6,6 +6,7 @@ import {
   Recommendation,
   ScoreValue,
 } from "@/types/assessment";
+import { MAX_RECOMMENDATIONS_PER_PILLAR } from "@/lib/config";
 
 const clamp = (value: number, min: number, max: number) =>
   Math.min(Math.max(value, min), max);
@@ -36,10 +37,13 @@ const getCategorySuggestions = (
   score: number,
   recommendations: Recommendation[],
 ): Recommendation[] => {
-  // For each category, suggest actions relevant to the current score ceiling.
-  return recommendations
+  // Find the most relevant action items (closest maxScoreInclusive >= score).
+  // This shows the next achievable goals, not all previous ones.
+  const filtered = recommendations
     .filter((item) => score <= item.maxScoreInclusive)
-    .slice(0, 2);
+    .sort((a, b) => a.maxScoreInclusive - b.maxScoreInclusive);
+
+  return filtered.slice(0, MAX_RECOMMENDATIONS_PER_PILLAR);
 };
 
 export const calculateAssessment = (

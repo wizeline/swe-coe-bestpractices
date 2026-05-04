@@ -1,9 +1,11 @@
 "use client";
 
+import Link from "next/link";
 import { FormEvent, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { assessmentTemplate } from "@/data/assessmentTemplate";
 import { formatSessionCreatedAt } from "@/lib/sessionDisplay";
+import { getToolingHrefForCategory } from "@/lib/toolingLinks";
 import {
   buildTeamStats,
   createAssessmentSession,
@@ -398,6 +400,9 @@ function ScoreCard({ result, email }: ScoreCardProps) {
                 <p className="suggestion-category">{category.title}</p>
                 <h4>{suggestion.title}</h4>
                 <p>{suggestion.action}</p>
+                <Link href={getToolingHrefForCategory(category.id)} className="suggestion-link">
+                  Open playbook
+                </Link>
               </article>
             )),
           )}
@@ -482,6 +487,9 @@ function TeamView({ stats, selectedSession }: TeamViewProps) {
                   <p className="suggestion-category">{category.title}</p>
                   <h4>{suggestion.title}</h4>
                   <p>{suggestion.action}</p>
+                  <Link href={getToolingHrefForCategory(category.id)} className="suggestion-link">
+                    Open playbook
+                  </Link>
                 </article>
               )),
             )}

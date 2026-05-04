@@ -43,6 +43,7 @@ src/
 - **Raw score range:** 0–48 (14 questions × 4 levels)
 - **Maturity thresholds:** `<13` Foundational · `13–24` Disciplined · `25–36` Optimized · `≥37` Strategic
 - `calculateAssessment(model, answers)` returns an `AssessmentResult` — the single source of truth for all scores
+- **Per-pillar recommendations:** Each pillar shows action items (default: 1 per pillar) — the most relevant next-level recommendations based on current score. Configure via `NEXT_PUBLIC_MAX_RECOMMENDATIONS` environment variable in `src/lib/config.ts`.
 
 ## Persistence
 

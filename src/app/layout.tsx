@@ -48,6 +48,9 @@ export default async function RootLayout({
                   <li>
                     <Link href="/dashboard">Dashboard</Link>
                   </li>
+                  <li>
+                    <Link href="/tooling">Playbook</Link>
+                  </li>
                   {canViewAdmin && (
                     <li>
                       <Link href="/admin">Admin</Link>

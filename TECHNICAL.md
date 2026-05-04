@@ -10,6 +10,7 @@ For product context and scoring definition see [PRODUCT.md](PRODUCT.md).
 - Auth.js (NextAuth v5) with Google provider
 - Prisma ORM + Next.js API routes for persistence
 - PostgreSQL (Neon on Vercel)
+- React Markdown for rendering maintainable content from versioned `.md` files
 
 ## Getting Started
 
@@ -33,6 +34,19 @@ Required auth variables:
 - ADMIN_EMAILS
 
 `ADMIN_EMAILS` should be a comma-separated list of user emails allowed to access the `/admin` route.
+
+Optional configuration variables:
+
+- `NEXT_PUBLIC_MAX_RECOMMENDATIONS` (default: 1) — Number of action items to display per pillar in assessment results and team reports. Use `NEXT_PUBLIC_` prefix to make it accessible on the client.
+
+## Content-driven AI Tooling View
+
+- Route: `/tooling`
+- Source of truth: `content/tooling.md`
+- Loader/parser: `src/lib/toolingContent.ts`
+- Rendering: server-side page in `src/app/tooling/page.tsx` using `react-markdown`
+
+The markdown file is intentionally grouped by `## Pillar ...` headings. Inside each pillar, use `###` for a playbook entry and `#### Do this`, `#### Why this works`, and `#### How to` for the colored guidance blocks. The parser keeps intro content separate and turns each pillar heading into a standalone section card so content editors can add or reorder guidance without touching React code.
 
 1. Start local PostgreSQL with Docker:
 

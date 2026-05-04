@@ -291,7 +291,7 @@ describe("buildTeamStats", () => {
     const stats = buildTeamStats(submissions);
 
     expect(stats.categoryAverages[category.id]).toBe(2.5);
-    expect(stats.categorySuggestions[category.id]).toHaveLength(2);
+    expect(stats.categorySuggestions[category.id]).toHaveLength(1);
     expect(stats.categorySuggestions[category.id][0].id).toBe(category.recommendations[0].id);
   });
 });
