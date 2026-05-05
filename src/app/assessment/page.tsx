@@ -1,3 +1,5 @@
+import { readFile } from "fs/promises";
+import path from "path";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { AssessmentForm } from "@/components/assessment/AssessmentForm";
@@ -11,6 +13,7 @@ export default async function AssessmentPage({ searchParams }: AssessmentPagePro
   const session = await auth();
   const userEmail = session?.user?.email;
   const params = await searchParams;
+  const promptContent = await readFile(path.join(process.cwd(), "prompts", "repo-analysis.md"), "utf8");
 
   if (!userEmail) {
     redirect("/login?callbackUrl=/assessment");
@@ -29,7 +32,7 @@ export default async function AssessmentPage({ searchParams }: AssessmentPagePro
         <p className="divider-description">Use our AI analysis prompt to automatically score your repository based on observable signals.</p>
       </div>
       
-      <RepositoryAnalysisSubmission userEmail={userEmail} />
+      <RepositoryAnalysisSubmission userEmail={userEmail} promptContent={promptContent} />
     </section>
   );
 }

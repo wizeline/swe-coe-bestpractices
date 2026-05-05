@@ -18,7 +18,18 @@ async function requestJson<T>(input: string, init?: RequestInit): Promise<T> {
   });
 
   if (!response.ok) {
-    throw new Error(`Request failed with status ${response.status}`);
+    let message = `Request failed with status ${response.status}`;
+
+    try {
+      const payload = (await response.json()) as { error?: unknown };
+      if (typeof payload?.error === "string" && payload.error.trim()) {
+        message = payload.error;
+      }
+    } catch {
+      // Keep fallback message when response body is not JSON.
+    }
+
+    throw new Error(message);
   }
 
   return (await response.json()) as T;

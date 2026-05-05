@@ -109,6 +109,7 @@ describe("submission API storage", () => {
     mockJsonResponse([]);
 
     await expect(loadAllSubmissions()).resolves.toEqual([]);
+
     expect(mockFetch).toHaveBeenCalledWith(
       "/api/submissions",
       expect.objectContaining({ headers: expect.any(Object) }),
@@ -130,7 +131,6 @@ describe("submission API storage", () => {
     const analysisPayload = {
       email: "analyst@example.com",
       analysis: {
-        overall_impressions: "Good maturity",
         pillars: {
           pillar_1_ideation: { title: "Ideation", questions: [], pillar_score: 3 },
           pillar_2_code: { title: "Code", questions: [], pillar_score: 3 },
@@ -140,9 +140,6 @@ describe("submission API storage", () => {
         },
         raw_score: 24,
         maturity_level: "Disciplined" as const,
-        key_strengths: ["Good CI/CD"],
-        key_weaknesses: ["Limited docs"],
-        recommendations: [],
       },
     };
 

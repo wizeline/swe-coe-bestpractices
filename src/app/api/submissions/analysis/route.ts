@@ -20,11 +20,6 @@ interface AnalysisPayload {
     };
     raw_score: number;
     maturity_level: "Foundational" | "Disciplined" | "Optimized" | "Strategic";
-    recommendations?: Array<{
-      priority: string;
-      pillar: string;
-      action: string;
-    }>;
   };
 }
 

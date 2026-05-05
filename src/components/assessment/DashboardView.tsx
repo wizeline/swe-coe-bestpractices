@@ -15,6 +15,7 @@ import {
   loadOwnedSessions,
   loadTeamSubmissions,
 } from "@/lib/storage";
+import { ErrorToast } from "@/components/assessment/ErrorToast";
 import { AssessmentResult, AssessmentSessionRecord, SubmissionRecord, TeamStats } from "@/types/assessment";
 
 interface DashboardViewProps {
@@ -46,6 +47,7 @@ export function DashboardView({ userEmail, initialSessionCode }: DashboardViewPr
   const [isCreatingSession, setIsCreatingSession] = useState(false);
   const [deletingSessionId, setDeletingSessionId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [toastError, setToastError] = useState("");
   const sessionCode = searchParams.get("session")?.trim().toUpperCase() ?? initialSessionCode;
   const canShowTeamView = Boolean(selectedSession?.isOwner);
   const isSessionView = Boolean(selectedSession);
@@ -77,6 +79,7 @@ export function DashboardView({ userEmail, initialSessionCode }: DashboardViewPr
         }
       } catch (error) {
         console.error("Dashboard load error:", error);
+        setToastError(error instanceof Error ? error.message : "Failed to load dashboard data.");
         if (active) {
           setUserSubmission(null);
           setSelectedSession(null);
@@ -110,7 +113,7 @@ export function DashboardView({ userEmail, initialSessionCode }: DashboardViewPr
       router.push(`/dashboard?session=${encodeURIComponent(created.code)}`);
     } catch (error) {
       console.error("Session create error:", error);
-      setSessionError("Failed to create session. Please try again.");
+      setToastError(error instanceof Error ? error.message : "Failed to create session.");
       setIsCreatingSession(false);
     }
   };
@@ -147,7 +150,7 @@ export function DashboardView({ userEmail, initialSessionCode }: DashboardViewPr
       }
     } catch (error) {
       console.error("Session delete error:", error);
-      setSessionError("Failed to delete session. Please try again.");
+      setToastError(error instanceof Error ? error.message : "Failed to delete session.");
     } finally {
       setDeletingSessionId(null);
     }
@@ -200,6 +203,7 @@ export function DashboardView({ userEmail, initialSessionCode }: DashboardViewPr
 
   return (
     <div className="dashboard-shell">
+      <ErrorToast message={toastError} onClose={() => setToastError("")} />
       {!isSessionView && (
         <SessionHub
           ownedSessions={ownedSessions}
@@ -343,11 +347,6 @@ interface ScoreCardProps {
 function ScoreCard({ result, email }: ScoreCardProps) {
   const answered = result.categories.reduce((acc, cat) => acc + cat.answered, 0);
   const total = result.categories.reduce((acc, cat) => acc + cat.total, 0);
-  const analysisRecommendations = result.analysis?.recommendations ?? [];
-  const hasAnalysisRecommendations = analysisRecommendations.length > 0;
-  const hasFindings =
-    (result.analysis?.keyStrengths?.length ?? 0) > 0 ||
-    (result.analysis?.keyWeaknesses?.length ?? 0) > 0;
 
   return (
     <div className="dashboard-grid">
@@ -398,63 +397,26 @@ function ScoreCard({ result, email }: ScoreCardProps) {
 
       <article className="card results-content-card results-content-card--suggestions">
         <section className="suggestions">
-          <h3>{hasAnalysisRecommendations ? "Report Action Items" : "Actions to Improve"}</h3>
-          {hasAnalysisRecommendations &&
-            analysisRecommendations.map((recommendation, index) => (
-              <article key={`analysis-rec-${index + 1}`} className="suggestion-item">
-                <p className="suggestion-category">{recommendation.pillar}</p>
-                <h4>{recommendation.priority.toUpperCase()} Priority</h4>
-                <p>{recommendation.action}</p>
+          <h3>Actions to Improve</h3>
+          {result.categories.flatMap((category) =>
+            category.suggestions.map((suggestion) => (
+              <article key={suggestion.id} className="suggestion-item">
+                <p className="suggestion-category">{category.title}</p>
+                <h4>{suggestion.title}</h4>
+                <p>{suggestion.action}</p>
+                <Link href={getToolingHrefForCategory(category.id)} className="suggestion-link">
+                  Open playbook
+                </Link>
               </article>
-            ))}
-          {!hasAnalysisRecommendations &&
-            result.categories.flatMap((category) =>
-              category.suggestions.map((suggestion) => (
-                <article key={suggestion.id} className="suggestion-item">
-                  <p className="suggestion-category">{category.title}</p>
-                  <h4>{suggestion.title}</h4>
-                  <p>{suggestion.action}</p>
-                  <Link href={getToolingHrefForCategory(category.id)} className="suggestion-link">
-                    Open playbook
-                  </Link>
-                </article>
-              )),
-            )}
-          {!hasAnalysisRecommendations && result.categories.every((c) => c.suggestions.length === 0) && (
+            )),
+          )}
+          {result.categories.every((c) => c.suggestions.length === 0) && (
             <p className="no-suggestions">
               Great job! Keep maintaining these high standards.
             </p>
           )}
         </section>
       </article>
-
-      {hasFindings && (
-        <article className="card results-content-card results-content-card--findings">
-          <section className="suggestions">
-            <h3>Report Findings</h3>
-            {(result.analysis?.keyStrengths?.length ?? 0) > 0 && (
-              <article className="suggestion-item">
-                <p className="suggestion-category">Strengths</p>
-                <ul className="analysis-list">
-                  {result.analysis?.keyStrengths.map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
-                </ul>
-              </article>
-            )}
-            {(result.analysis?.keyWeaknesses?.length ?? 0) > 0 && (
-              <article className="suggestion-item">
-                <p className="suggestion-category">Weaknesses</p>
-                <ul className="analysis-list">
-                  {result.analysis?.keyWeaknesses.map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
-                </ul>
-              </article>
-            )}
-          </section>
-        </article>
-      )}
 
     </div>
   );

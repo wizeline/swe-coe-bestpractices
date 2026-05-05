@@ -152,9 +152,16 @@ Examples of insufficient context:
 
 ## Output Format
 
-After your analysis, generate a JSON object with the following structure. **Output only the JSON object, no other text.**
+After your analysis, produce two sections in this exact order:
 
-Privacy rule: keep the JSON minimal. Do not include code snippets, file paths, secrets, hostnames, ticket IDs, customer names, or environment-specific identifiers.
+1. A `Submission JSON` section containing only the minimal JSON object shown below inside a `json` fenced code block. This is the only part intended to be pasted into the dashboard.
+2. A `Private Recommendations` section in Markdown for the user only. This section must stay outside the JSON and must never be included in the submission payload.
+
+The dashboard accepts only raw JSON. The user must copy just the JSON object content and exclude headings, code fences, and private recommendations before submitting.
+
+Privacy rule: keep the JSON minimal. Do not include code snippets, file paths, secrets, hostnames, ticket IDs, customer names, environment-specific identifiers, or free-text findings in the JSON.
+
+The `Private Recommendations` section may be more detailed, but it must still avoid secrets or verbatim sensitive repository content. Summarize patterns and improvement actions at a high level.
 
 ```json
 {
@@ -211,6 +218,17 @@ Privacy rule: keep the JSON minimal. Do not include code snippets, file paths, s
 }
 ```
 
+Then add a separate Markdown section like this:
+
+```markdown
+## Private Recommendations
+
+1. Explain the 3-5 highest-value improvements in plain language.
+2. Prioritize them by expected impact and implementation effort.
+3. Mention important caveats, blind spots, or missing evidence that could change the score.
+4. Keep this section out of the JSON and out of any content the user submits to the dashboard.
+```
+
 ## Instructions for the User
 
 1. **Gather your repository context**:
@@ -224,7 +242,7 @@ Privacy rule: keep the JSON minimal. Do not include code snippets, file paths, s
 
 3. **Wait for the analysis** – I will examine the repository signals and provide a maturity score
 
-4. **Copy the JSON output** to submit to the Maturity Assessment Dashboard at [your URL here]
+4. **Copy only the JSON object content** to submit to the Maturity Assessment Dashboard at [your URL here]
 
 5. **Track your progress** – Submit analyses quarterly to measure improvement over time
 

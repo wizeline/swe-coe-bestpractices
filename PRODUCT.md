@@ -55,7 +55,7 @@ In addition to the manual questionnaire, engineers can use an automated reposito
 
 ### How It Works
 
-1. **Get the prompt**: The analysis prompt is located in `prompts/repo-analysis.md`
+1. **Get the prompt**: The analysis prompt is located in `prompts/repo-analysis.md` and is also available from a collapsible copyable section in `/assessment`
 2. **Run the prompt**: Copy the prompt and paste it into your AI assistant (ChatGPT, Claude, etc.)
 3. **Provide repository context**: Share your repository's:
    - Directory structure (output of `ls -la` and `tree -L 2`)
@@ -64,15 +64,20 @@ In addition to the manual questionnaire, engineers can use an automated reposito
    - Test framework and coverage info
    - README and architecture documentation
    - Package/dependency files
-4. **Get analysis**: The AI will analyze the signals and generate a JSON object with:
+4. **Get analysis**: The AI will analyze the signals and return:
+   - A minimal JSON block for dashboard submission
+   - A separate private recommendations section for the user
+   The private recommendations are not meant to be stored in the product.
+
+   The submission JSON contains:
    - Individual question scores (1-4 per question)
    - Pillar scores
    - Raw score (0-48)
    - Maturity level (Foundational/Disciplined/Optimized/Strategic)
-   - Key strengths and weaknesses
-   - Prioritized recommendations
-5. **Submit to dashboard**: Go to `/assessment` → "Repository Analysis" section → paste the JSON → submit
+5. **Submit to dashboard**: Go to `/assessment` → "Repository Analysis" section → paste only the JSON content → submit
 6. **Track progress**: Results appear on your dashboard alongside questionnaire submissions
+
+Route failures while submitting or loading assessment data are surfaced with toast notifications so users receive immediate feedback without losing form context.
 
 ### Advantages
 

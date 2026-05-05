@@ -2179,12 +2179,56 @@ table tbody tr:last-child td {
   color: var(--text-muted);
 }
 
+.prompt-helper {
+  display: grid;
+}
+
+.prompt-helper-actions {
+  margin-top: 12px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.prompt-textarea {
+  margin: 0;
+  min-height: 360px;
+  background: var(--surface);
+}
+
 .analysis-list {
   margin: 10px 0 0;
   padding-left: 18px;
   color: var(--text-dim);
   display: grid;
   gap: 6px;
+}
+
+.error-toast {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 120;
+  width: min(420px, calc(100vw - 40px));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(227, 44, 39, 0.35);
+  background: #fff2f2;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.16);
+}
+
+.error-toast p {
+  margin: 0;
+  color: var(--text);
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.error-toast .button {
+  min-height: 34px;
 }
 
 @media (max-width: 768px) {
@@ -2200,6 +2244,17 @@ table tbody tr:last-child td {
   .json-textarea {
     min-height: 150px;
     font-size: 0.8rem;
+  }
+
+  .prompt-textarea {
+    min-height: 260px;
+  }
+
+  .error-toast {
+    right: 12px;
+    bottom: 12px;
+    width: calc(100vw - 24px);
+    padding: 12px;
   }
 
   .json-format-helper pre {
