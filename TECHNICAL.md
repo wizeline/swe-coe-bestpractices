@@ -117,8 +117,8 @@ npm run prisma:migrate:deploy # run production DB migrations
 For production deploys, use a managed PostgreSQL database.
 
 1. Set `DATABASE_URL`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, and `AUTH_SECRET` in Vercel project environment variables.
-1. Set `ADMIN_EMAILS` in Vercel if you want to enable the admin comparison page.
-2. Deploy normally with Vercel CLI or Git integration.
+2. Set `ADMIN_EMAILS` in Vercel if you want to enable the admin comparison page.
+3. Deploy normally with Vercel CLI or Git integration.
 
 This repository includes `vercel.json` with:
 

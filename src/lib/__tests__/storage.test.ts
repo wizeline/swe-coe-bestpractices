@@ -8,12 +8,13 @@ import {
   deleteSubmission,
   getSessionByCode,
   getLatestSubmissionByEmail,
+  isInsufficientDataError,
   loadAllSubmissions,
   loadOwnedSessions,
   loadTeamSubmissions,
   submitRepositoryAnalysis,
 } from "@/lib/storage";
-import type { AssessmentResult, AssessmentSessionRecord, SubmissionRecord } from "@/types/assessment";
+import type { AnalysisSubmissionResponse, AssessmentResult, AssessmentSessionRecord, SubmissionRecord } from "@/types/assessment";
 
 const makeResult = (overallScore: number, totalScore = overallScore, maxScore = 4): AssessmentResult => ({
   overallScore,
@@ -145,11 +146,11 @@ describe("submission API storage", () => {
       },
     };
 
-    const response: SubmissionRecord = {
+    const response: AnalysisSubmissionResponse = {
       id: "sub-analysis-1",
       email: "analyst@example.com",
       totalScore: 24,
-      maxScore: 48,
+      maxScore: 56,
       maturityLabel: "Disciplined",
       submittedAt: new Date().toISOString(),
     };
@@ -170,6 +171,41 @@ describe("submission API storage", () => {
 
   it("rejects invalid JSON for repository analysis", async () => {
     await expect(submitRepositoryAnalysis("{ invalid json }")).rejects.toThrow("Invalid JSON format");
+  });
+
+  it("rejects INSUFFICIENT_DATA payload with reason", async () => {
+    const payload = { error: "INSUFFICIENT_DATA", reason: "No commit history provided." };
+    await expect(submitRepositoryAnalysis(JSON.stringify(payload))).rejects.toThrow(
+      "Cannot submit: insufficient repository data. No commit history provided.",
+    );
+  });
+
+  it("rejects INSUFFICIENT_DATA payload without reason using fallback message", async () => {
+    const payload = { error: "INSUFFICIENT_DATA" };
+    await expect(submitRepositoryAnalysis(JSON.stringify(payload))).rejects.toThrow(
+      "Cannot submit: insufficient repository data.",
+    );
+  });
+});
+
+describe("isInsufficientDataError", () => {
+  it("returns true for INSUFFICIENT_DATA error object", () => {
+    expect(isInsufficientDataError({ error: "INSUFFICIENT_DATA" })).toBe(true);
+    expect(isInsufficientDataError({ error: "INSUFFICIENT_DATA", reason: "Missing CI config." })).toBe(true);
+  });
+
+  it("returns false for valid analysis payload", () => {
+    expect(isInsufficientDataError({ analysis: { pillars: {} } })).toBe(false);
+  });
+
+  it("returns false for non-object values", () => {
+    expect(isInsufficientDataError(null)).toBe(false);
+    expect(isInsufficientDataError("INSUFFICIENT_DATA")).toBe(false);
+    expect(isInsufficientDataError(42)).toBe(false);
+  });
+
+  it("returns false for object with different error code", () => {
+    expect(isInsufficientDataError({ error: "SOME_OTHER_ERROR" })).toBe(false);
   });
 });
 

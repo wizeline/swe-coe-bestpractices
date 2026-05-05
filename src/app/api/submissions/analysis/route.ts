@@ -29,6 +29,10 @@ interface AnalysisPayload {
 }
 
 const STANDARD_PILLAR_IDS = assessmentTemplate.categories.map((category) => category.id);
+const TEMPLATE_MAX_SCORE = assessmentTemplate.categories.reduce(
+  (acc, category) => acc + category.questions.length * 4,
+  0,
+);
 
 function isValidScoreValue(value: number): boolean {
   return Number.isFinite(value) && value >= 1 && value <= 4;
@@ -60,8 +64,8 @@ function buildCategoryResults(payload: AnalysisPayload) {
       id: templateCategory.id,
       title: templateCategory.title,
       score: Number(pillarScore.toFixed(2)),
-      answered: pillarData.questions.length,
-      total: pillarData.questions.length,
+      answered: Math.min(pillarData.questions.length, templateCategory.questions.length),
+      total: templateCategory.questions.length,
       weight: templateCategory.weight,
       suggestions,
     };
@@ -75,7 +79,7 @@ function validateAnalysisPayload(data: unknown): data is AnalysisPayload {
     return false;
   }
 
-  if (typeof payload.analysis.raw_score !== "number" || payload.analysis.raw_score < 0 || payload.analysis.raw_score > 48) {
+  if (typeof payload.analysis.raw_score !== "number" || payload.analysis.raw_score < 0 || payload.analysis.raw_score > TEMPLATE_MAX_SCORE) {
     return false;
   }
 
@@ -135,21 +139,26 @@ export async function POST(request: NextRequest) {
     const categories = buildCategoryResults(body);
     const totalAnswered = categories.reduce((acc, category) => acc + category.answered, 0);
     const totalQuestions = categories.reduce((acc, category) => acc + category.total, 0);
+    const completion = totalQuestions === 0 ? 0 : Math.round((totalAnswered / totalQuestions) * 100);
+
+    const weightedSum = categories.reduce((acc, cat) => acc + cat.score * cat.weight, 0);
+    const weightTotal = categories.reduce((acc, cat) => acc + cat.weight, 0);
+    const overallScore = Number((weightTotal === 0 ? 0 : weightedSum / weightTotal).toFixed(2));
 
     const created = await prisma.submission.create({
       data: {
         email: userEmail,
         sessionId: null,
         totalScore: body.analysis.raw_score,
-        maxScore: 48,
-        completion: totalQuestions === 0 ? 0 : Math.round((totalAnswered / totalQuestions) * 100),
+        maxScore: TEMPLATE_MAX_SCORE,
+        completion,
         maturityLabel: body.analysis.maturity_level,
         answers: {} as unknown as Prisma.InputJsonValue,
         result: {
-          overallScore: Number((body.analysis.raw_score / 12).toFixed(2)),
+          overallScore,
           totalScore: body.analysis.raw_score,
-          maxScore: 48,
-          completion: totalQuestions === 0 ? 0 : Math.round((totalAnswered / totalQuestions) * 100),
+          maxScore: TEMPLATE_MAX_SCORE,
+          completion,
           maturityLabel: body.analysis.maturity_level,
           categories,
         } as unknown as Prisma.InputJsonValue,

@@ -2,7 +2,7 @@
 
 ## Overview
 
-You are an engineering maturity analyst. Your task is to analyze a Git repository and score its engineering maturity across **5 Pillars** on a scale of 1-4 for each question (14 questions total), resulting in a raw score from 0 to 48.
+You are an engineering maturity analyst. Your task is to analyze a Git repository and score its engineering maturity across **5 Pillars** on a scale of 1-4 for each question (14 questions total), resulting in a raw score from 14 to 56.
 
 The 5 Pillars are:
 1. **Ideation & Requirements** (20% weight) – Requirements clarity, impact analysis, delivery tracking
@@ -136,6 +136,20 @@ For each pillar, read the 2-3 questions and score them based on observable evide
 5. **Evaluate code organization**: Clear structure suggests maturity. Look for module separation, dependency management, and code quality signals.
 6. **Consider observable processes**: Tags, milestones, issue templates, CODEOWNERS, security policies suggest maturity.
 
+## Insufficient Data Rule
+
+If the provided context does not contain enough signals to score **at least 3 of the 5 pillars** with reasonable confidence (e.g. only a README was shared, no commit history, no CI config, no test evidence), **do not produce a scored analysis**. Instead output only this JSON object and nothing else:
+
+```json
+{ "error": "INSUFFICIENT_DATA", "reason": "<one sentence explaining what is missing>" }
+```
+
+Examples of insufficient context:
+
+- Only a README or directory listing with no commit history
+- No CI/CD config, no test files, and no code visible
+- Fewer than 5 commits in the history and no other signals
+
 ## Output Format
 
 After your analysis, generate a JSON object with the following structure. **Output only the JSON object, no other text.**
@@ -149,50 +163,50 @@ Privacy rule: keep the JSON minimal. Do not include code snippets, file paths, s
       "pillar-1-ideation": {
         "title": "Pillar 1 – Ideation & Requirements",
         "questions": [
-          { "id": "q1.1", "score": 2 },
-          { "id": "q1.2", "score": 2 },
-          { "id": "q1.3", "score": 1 }
+          { "id": "p1-q1", "score": 2 },
+          { "id": "p1-q2", "score": 2 },
+          { "id": "p1-q3", "score": 1 }
         ],
         "pillar_score": 2
       },
       "pillar-2-design": {
         "title": "Pillar 2 – Design & Architecture",
         "questions": [
-          { "id": "q2.1", "score": 3 },
-          { "id": "q2.2", "score": 2 },
-          { "id": "q2.3", "score": 2 }
+          { "id": "p2-q4", "score": 3 },
+          { "id": "p2-q5", "score": 2 },
+          { "id": "p2-q6", "score": 2 }
         ],
         "pillar_score": 2
       },
       "pillar-3-development": {
         "title": "Pillar 3 – Development Hygiene",
         "questions": [
-          { "id": "q3.1", "score": 2 },
-          { "id": "q3.2", "score": 3 },
-          { "id": "q3.3", "score": 2 }
+          { "id": "p3-q7", "score": 2 },
+          { "id": "p3-q8", "score": 3 },
+          { "id": "p3-q9", "score": 2 }
         ],
         "pillar_score": 2
       },
       "pillar-4-quality": {
         "title": "Pillar 4 – Quality Engineering",
         "questions": [
-          { "id": "q4.1", "score": 2 },
-          { "id": "q4.2", "score": 1 },
-          { "id": "q4.3", "score": 1 }
+          { "id": "p4-q10", "score": 2 },
+          { "id": "p4-q11", "score": 1 },
+          { "id": "p4-q12", "score": 1 }
         ],
         "pillar_score": 1
       },
       "pillar-5-operations": {
         "title": "Pillar 5 – Operations & Maintenance",
         "questions": [
-          { "id": "q5.1", "score": 2 },
-          { "id": "q5.2", "score": 1 }
+          { "id": "p5-q13", "score": 2 },
+          { "id": "p5-q14", "score": 1 }
         ],
         "pillar_score": 1
       }
     },
-    "raw_score": 24,
-    "maturity_level": "Disciplined"
+    "raw_score": 26,
+    "maturity_level": "Optimized"
   }
 }
 ```

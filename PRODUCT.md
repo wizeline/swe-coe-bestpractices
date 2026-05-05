@@ -85,6 +85,7 @@ In addition to the manual questionnaire, engineers can use an automated reposito
 ### Scoring Basis
 
 The prompt analyzes:
+
 - **Commit message quality and frequency** (Ideation & Requirements)
 - **Code review discipline and automation** (Code & Delivery)
 - **Test coverage and CI/CD reliability** (Testing & Quality)

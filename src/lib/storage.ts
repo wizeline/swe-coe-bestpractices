@@ -1,5 +1,6 @@
 import { buildTeamStats } from "@/lib/teamStats";
 import {
+  AnalysisSubmissionResponse,
   AssessmentSessionRecord,
   AnswerMap,
   AssessmentResult,
@@ -90,16 +91,29 @@ export async function deleteSubmission(id: string): Promise<void> {
   });
 }
 
-export async function submitRepositoryAnalysis(analysisData: string): Promise<SubmissionRecord> {
+export async function submitRepositoryAnalysis(analysisData: string): Promise<AnalysisSubmissionResponse> {
   let payload: unknown;
   try {
     payload = JSON.parse(analysisData);
   } catch {
     throw new Error("Invalid JSON format");
   }
-  
-  return requestJson<SubmissionRecord>("/api/submissions/analysis", {
+
+  if (isInsufficientDataError(payload)) {
+    const reason = (payload as { reason?: string }).reason ?? "Provide more context and re-run the analysis prompt.";
+    throw new Error(`Cannot submit: insufficient repository data. ${reason}`);
+  }
+
+  return requestJson<AnalysisSubmissionResponse>("/api/submissions/analysis", {
     method: "POST",
     body: JSON.stringify(payload),
   });
+}
+
+export function isInsufficientDataError(payload: unknown): boolean {
+  return (
+    typeof payload === "object" &&
+    payload !== null &&
+    (payload as Record<string, unknown>).error === "INSUFFICIENT_DATA"
+  );
 }

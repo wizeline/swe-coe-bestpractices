@@ -26,8 +26,6 @@ export function RepositoryAnalysisSubmission({ userEmail }: RepositoryAnalysisSu
 
     setIsSubmitting(true);
     try {
-      // Parse once to fail fast on invalid JSON format.
-      JSON.parse(jsonInput);
       await submitRepositoryAnalysis(jsonInput);
       setSuccessMessage("Analysis submitted successfully! Redirecting to dashboard...");
       setJsonInput("");
@@ -92,16 +90,51 @@ export function RepositoryAnalysisSubmission({ userEmail }: RepositoryAnalysisSu
     "pillars": {
       "pillar-1-ideation": {
         "title": "Pillar 1 – Ideation & Requirements",
-        "questions": [{ "id": "q1.1", "score": 2 }],
+        "questions": [
+          { "id": "p1-q1", "score": 2 },
+          { "id": "p1-q2", "score": 2 },
+          { "id": "p1-q3", "score": 2 }
+        ],
         "pillar_score": 2
       },
-      "pillar-2-design": { "title": "Pillar 2 – Design & Architecture", "questions": [{ "id": "q2.1", "score": 2 }], "pillar_score": 2 },
-      "pillar-3-development": { "title": "Pillar 3 – Development Hygiene", "questions": [{ "id": "q3.1", "score": 2 }], "pillar_score": 2 },
-      "pillar-4-quality": { "title": "Pillar 4 – Quality Engineering", "questions": [{ "id": "q4.1", "score": 2 }], "pillar_score": 2 },
-      "pillar-5-operations": { "title": "Pillar 5 – Operations & Maintenance", "questions": [{ "id": "q5.1", "score": 2 }], "pillar_score": 2 }
+      "pillar-2-design": {
+        "title": "Pillar 2 – Design & Architecture",
+        "questions": [
+          { "id": "p2-q4", "score": 2 },
+          { "id": "p2-q5", "score": 2 },
+          { "id": "p2-q6", "score": 2 }
+        ],
+        "pillar_score": 2
+      },
+      "pillar-3-development": {
+        "title": "Pillar 3 – Development Hygiene",
+        "questions": [
+          { "id": "p3-q7", "score": 2 },
+          { "id": "p3-q8", "score": 2 },
+          { "id": "p3-q9", "score": 2 }
+        ],
+        "pillar_score": 2
+      },
+      "pillar-4-quality": {
+        "title": "Pillar 4 – Quality Engineering",
+        "questions": [
+          { "id": "p4-q10", "score": 2 },
+          { "id": "p4-q11", "score": 2 },
+          { "id": "p4-q12", "score": 2 }
+        ],
+        "pillar_score": 2
+      },
+      "pillar-5-operations": {
+        "title": "Pillar 5 – Operations & Maintenance",
+        "questions": [
+          { "id": "p5-q13", "score": 2 },
+          { "id": "p5-q14", "score": 2 }
+        ],
+        "pillar_score": 2
+      }
     },
-    "raw_score": 24,
-    "maturity_level": "Disciplined"
+    "raw_score": 28,
+    "maturity_level": "Optimized"
   }
 }`}</pre>
           </details>
