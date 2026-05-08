@@ -2,12 +2,12 @@
 
 ## Overview
 
-You are an engineering maturity analyst. Your task is to analyze a Git repository and score its engineering maturity across **5 Pillars** on a scale of 1-4 for each question (14 questions total), resulting in a raw score from 14 to 56.
+You are an engineering maturity analyst. Your task is to analyze a Git repository and score its engineering maturity across **5 Pillars** on a scale of 1-4 for each question (16 questions total), resulting in a raw score from 16 to 64.
 
 The 5 Pillars are:
 1. **Ideation & Requirements** (20% weight) – Requirements clarity, impact analysis, delivery tracking
 2. **Design & Architecture** (20% weight) – Reuse discovery, technical planning, security analysis
-3. **Development Hygiene** (20% weight) – PR scope discipline, spec traceability, docs-as-code
+3. **Development Hygiene** (20% weight) – PR scope discipline, spec traceability, docs-as-code, CI/CD reliability, data integrity
 4. **Quality Engineering** (20% weight) – Hidden bug testing, logic verification, test debt management
 5. **Operations & Maintenance** (20% weight) – Observability and knowledge transfer readiness
 
@@ -92,6 +92,18 @@ For each pillar, read the 2-3 questions and score them based on observable evide
 - **2**: Documentation updates happen late/inconsistently
 - **3**: Documentation is updated in the same change set as code
 - **4**: AI-assisted docs generation/refresh is part of delivery flow
+
+**Q3.4: CI/CD Pipeline Reliability (p2-q15)**
+- **1**: No CI pipeline; deployments are manual or ad-hoc
+- **2**: Basic CI pipeline exists (build + tests) but quality gates are not enforced consistently
+- **3**: All changes pass automated quality gates (tests, linting, security checks) in CI before merge; deployment process includes documented rollback steps
+- **4**: Pipeline failures are investigated for root cause; pipeline stages are actively improved when gaps are found (e.g., new gates added, coverage increased)
+
+**Q3.5: Data Integrity Enforcement (p2-q16)**
+- **1**: No explicit input validation or DB constraints in application code
+- **2**: Input validation exists at entry points but DB-level constraints or transactional logic are inconsistent
+- **3**: Integrity is enforced at every boundary: input validation, DB constraints, and transactions for multi-step operations
+- **4**: Data guarantees are verified by automated tests in CI; service contracts (what is promised, what is assumed from upstream) are documented
 
 ### Pillar 4: Quality Engineering (3 questions)
 
@@ -190,7 +202,9 @@ The `Private Recommendations` section may be more detailed, but it must still av
         "questions": [
           { "id": "p3-q7", "score": 2 },
           { "id": "p3-q8", "score": 3 },
-          { "id": "p3-q9", "score": 2 }
+          { "id": "p3-q9", "score": 2 },
+          { "id": "p2-q15", "score": 2 },
+          { "id": "p2-q16", "score": 1 }
         ],
         "pillar_score": 2
       },
@@ -212,7 +226,7 @@ The `Private Recommendations` section may be more detailed, but it must still av
         "pillar_score": 1
       }
     },
-    "raw_score": 26,
+    "raw_score": 28,
     "maturity_level": "Optimized"
   }
 }
