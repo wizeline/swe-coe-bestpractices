@@ -2,9 +2,22 @@ export type ScoreValue = 1 | 2 | 3 | 4;
 
 export type AnswerMap = Record<string, ScoreValue | undefined>;
 
+/**
+ * Symbolic name for a score band used in recommendations.
+ * Maps to a numeric maxScoreInclusive threshold via SCORE_BANDS in scoring.ts.
+ * "strategic" maps to Infinity — always shown to users who have reached the top band.
+ */
+export type RecommendationBand = "foundational" | "disciplined" | "optimized" | "strategic";
+
 export interface Recommendation {
   id: string;
-  maxScoreInclusive: number;
+  /**
+   * Preferred: use `band` to stay independent of raw score thresholds.
+   * The runtime resolves this to maxScoreInclusive via SCORE_BANDS.
+   */
+  band?: RecommendationBand;
+  /** Legacy / explicit override. Ignored when `band` is set. */
+  maxScoreInclusive?: number;
   title: string;
   action: string;
 }
@@ -12,7 +25,11 @@ export interface Recommendation {
 export interface Question {
   id: string;
   text: string;
-  hint?: string;
+  /**
+   * Per-level descriptions shown next to each answer option in the form.
+   * Keyed by ScoreValue so TypeScript enforces all four levels are present.
+   */
+  hint?: Record<ScoreValue, string>;
 }
 
 export interface Category {

@@ -113,7 +113,13 @@ export function AssessmentApp() {
                 return (
                   <fieldset key={question.id} className="question-row">
                     <legend>{question.text}</legend>
-                    {question.hint ? <p className="hint">{question.hint}</p> : null}
+                    {question.hint ? (
+                      <ul className="hint">
+                        {([1, 2, 3, 4] as const).map((v) => (
+                          <li key={v}><strong>{v}</strong> — {question.hint![v]}</li>
+                        ))}
+                      </ul>
+                    ) : null}
                     <div className="scale-row" role="radiogroup" aria-label={question.text}>
                       {scaleValues.map((value) => (
                         <label key={value} className="scale-option">

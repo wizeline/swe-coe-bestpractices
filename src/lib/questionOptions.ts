@@ -1,16 +1,18 @@
+import type { ScoreValue } from "@/types/assessment";
+
 export interface ScoreGuideOption {
-  score: string;
+  score: ScoreValue;
   description: string;
 }
 
-/** Parses "1 = foo · 2 = bar · 3 = baz" into [{score, description}] */
-export function parseHintBullets(text: string): ScoreGuideOption[] {
-  return text
-    .split(" · ")
-    .map((chunk) => {
-      const match = chunk.match(/^(\d+)\s*=\s*(.+)$/);
-      if (!match) return null;
-      return { score: match[1], description: match[2].trim() };
-    })
-    .filter(Boolean) as ScoreGuideOption[];
+/**
+ * Converts a hint Record into an ordered array of score-description pairs.
+ * Returns an empty array when no hint is provided.
+ */
+export function hintToScoreGuides(hint: Record<ScoreValue, string> | undefined): ScoreGuideOption[] {
+  if (!hint) return [];
+  return ([1, 2, 3, 4] as ScoreValue[]).map((score) => ({
+    score,
+    description: hint[score],
+  }));
 }

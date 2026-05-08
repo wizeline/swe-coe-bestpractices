@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { assessmentTemplate } from "@/data/assessmentTemplate";
 import { clearDraft, loadDraft, saveDraft } from "@/lib/draftStorage";
-import { parseHintBullets } from "@/lib/questionOptions";
+import { hintToScoreGuides } from "@/lib/questionOptions";
 import { calculateAssessment } from "@/lib/scoring";
 import { addSubmission, getSessionByCode } from "@/lib/storage";
 import { ErrorToast } from "@/components/assessment/ErrorToast";
@@ -241,7 +241,7 @@ export function AssessmentForm({ userEmail, initialSessionCode }: AssessmentForm
               {activeCategory.questions.map((question, qi) => {
                 const selected = answers[question.id];
                 const isAnswered = selected !== undefined;
-                const scoreGuides = question.hint ? parseHintBullets(question.hint) : [];
+                const scoreGuides = hintToScoreGuides(question.hint);
                 return (
                   <fieldset
                     key={question.id}
@@ -259,7 +259,7 @@ export function AssessmentForm({ userEmail, initialSessionCode }: AssessmentForm
                     <div className="scale-row" role="radiogroup" aria-label={question.text}>
                       {scaleConfig.map(({ value, label }) => (
                         (() => {
-                          const optionGuide = scoreGuides.find((guide) => guide.score === String(value));
+                          const optionGuide = scoreGuides.find((guide) => guide.score === value);
                           const optionDescription = optionGuide?.description ?? "";
                           const optionDescriptionId = `${question.id}-score-${value}-description`;
 

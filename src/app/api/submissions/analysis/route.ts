@@ -2,6 +2,7 @@ import { Prisma } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { MAX_RECOMMENDATIONS_PER_PILLAR } from "@/lib/config";
+import { SCORE_BANDS } from "@/lib/scoring";
 import { assessmentTemplate } from "@/data/assessmentTemplate";
 import { prisma } from "@/lib/prisma";
 
@@ -43,8 +44,15 @@ function getTemplateSuggestions(categoryId: string, pillarScore: number) {
   const scoreBand = Math.round(Math.max(1, Math.min(4, pillarScore)) * 12);
 
   return [...category.recommendations]
-    .sort((a, b) => a.maxScoreInclusive - b.maxScoreInclusive)
-    .filter((item) => scoreBand <= item.maxScoreInclusive)
+    .sort((a, b) => {
+      const aMax = a.band ? SCORE_BANDS[a.band] : (a.maxScoreInclusive ?? 0);
+      const bMax = b.band ? SCORE_BANDS[b.band] : (b.maxScoreInclusive ?? 0);
+      return aMax - bMax;
+    })
+    .filter((item) => {
+      const max = item.band ? SCORE_BANDS[item.band] : (item.maxScoreInclusive ?? 0);
+      return scoreBand <= max;
+    })
     .slice(0, MAX_RECOMMENDATIONS_PER_PILLAR);
 }
 
