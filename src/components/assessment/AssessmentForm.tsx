@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { assessmentTemplate } from "@/data/assessmentTemplate";
 import { clearDraft, loadDraft, saveDraft } from "@/lib/draftStorage";
@@ -33,6 +33,7 @@ export function AssessmentForm({ userEmail, initialSessionCode }: AssessmentForm
   const [assessmentSession, setAssessmentSession] = useState<AssessmentSessionRecord | null>(null);
   const [sessionError, setSessionError] = useState("");
   const [toastError, setToastError] = useState("");
+  const formRef = useRef<HTMLElement>(null);
 
   const totalPillars = assessmentTemplate.categories.length;
   const activeCategory = assessmentTemplate.categories[currentPillar];
@@ -89,6 +90,12 @@ export function AssessmentForm({ userEmail, initialSessionCode }: AssessmentForm
 
     if (formError) setFormError("");
   };
+
+  useEffect(() => {
+    if (!showOnboarding) {
+      formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [currentPillar, showOnboarding]);
 
   const goToPreviousPillar = () => {
     setCurrentPillar((prev) => Math.max(prev - 1, 0));
@@ -161,7 +168,7 @@ export function AssessmentForm({ userEmail, initialSessionCode }: AssessmentForm
           </div>
         </div>
       )}
-      <article className="card form-card">
+      <article className="card form-card" ref={formRef}>
         {/* ── Header ── */}
         <header className="card-header">
           <div className="form-header-row">

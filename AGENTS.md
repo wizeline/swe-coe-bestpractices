@@ -1,4 +1,4 @@
-# AGENTS.md — SWE Best Practices Pulse
+# AGENTS.md - SWE Best Practices Pulse
 
 AI agent and coding assistant instructions for this repository.
 
@@ -18,19 +18,19 @@ src/
 │   └── api/           # Route handlers for submissions, sessions
 ├── components/
 │   └── assessment/    # All UI components (client-only, "use client")
-├── data/              # assessmentTemplate.ts — questions, pillars, recommendations
+├── data/              # assessmentTemplate.ts - questions, pillars, recommendations
 ├── lib/               # scoring.ts (pure), storage.ts (API client), prisma.ts (singleton client)
-└── types/             # assessment.ts — canonical domain types
+└── types/             # assessment.ts - canonical domain types
 ```
 
-**Key invariant:** `src/lib/scoring.ts` is a pure function — never import browser APIs there.  
+**Key invariant:** `src/lib/scoring.ts` is a pure function: never import browser APIs there.  
 **Key invariant:** `src/lib/prisma.ts` owns the singleton Prisma client for server/runtime safety.  
 **Key invariant:** `src/lib/storage.ts` is a client API wrapper around `/api/*` and must not read/write browser storage directly.
 
 ## Code Style
 
-- TypeScript strict mode — no `any`, no `@ts-ignore`
-- All React components are `"use client"` — this project has no Server Components with state
+- TypeScript strict mode: no `any`, no `@ts-ignore`
+- All React components are `"use client"` (this project has no Server Components with state)
 - CSS is in `src/app/globals.css` using CSS variables (`--brand-primary`, `--text`, `--bg-soft`, etc.)
 - No Tailwind, no CSS-in-JS, no component libraries
 - Use `clamp()` for responsive sizing; breakpoints at 768px, 540px, 480px
@@ -38,12 +38,12 @@ src/
 
 ## Scoring Domain
 
-- `ScoreValue = 1 | 2 | 3 | 4` — never use raw numbers outside this union
+- `ScoreValue = 1 | 2 | 3 | 4`: never use raw numbers outside this union
 - **Per-question:** 1 = Foundational, 2 = Disciplined, 3 = Optimized, 4 = Strategic
 - **Raw score range:** 0–64 (16 questions × 4 levels)
 - **Score thresholds:** `<13` Foundational · `13–24` Disciplined · `25–36` Optimized · `≥37` Strategic
-- `calculateAssessment(model, answers)` returns an `AssessmentResult` — the single source of truth for all scores
-- **Per-pillar recommendations:** Each pillar shows action items (default: 1 per pillar) — the most relevant next-level recommendations based on current score. Configure via `NEXT_PUBLIC_MAX_RECOMMENDATIONS` environment variable in `src/lib/config.ts`.
+- `calculateAssessment(model, answers)` returns an `AssessmentResult`, the single source of truth for all scores
+- **Per-pillar recommendations:** Each pillar shows action items (default: 1 per pillar), the most relevant next-level recommendations based on current score. Configure via `NEXT_PUBLIC_MAX_RECOMMENDATIONS` environment variable in `src/lib/config.ts`.
 
 ## Persistence
 
@@ -54,7 +54,7 @@ Prisma models (see `prisma/schema.prisma`):
 | `Submission` | Completed assessments (`email`, `answers`, `result`, `submittedAt`) |
 | `AssessmentSession` | Team sessions for group assessments |
 
-Never query Prisma directly from client components — use `src/lib/storage.ts` and `/api/*` route handlers.
+Never query Prisma directly from client components: use `src/lib/storage.ts` and `/api/*` route handlers.
 
 ## Build & Test
 
@@ -69,7 +69,7 @@ npm run test:watch   # Vitest in watch mode
 npm run test:coverage # coverage report (HTML in coverage/)
 ```
 
-**CI gates:** `lint` → `test` → `build` — all three must pass.
+**CI gates:** `lint` -> `test` -> `build` - all three must pass.
 
 ## Feature Delivery Requirements (Agents)
 
@@ -90,7 +90,7 @@ If any required item cannot be completed (for example, missing testability in le
 ## Testing Conventions
 
 - Tests live in `src/lib/__tests__/` alongside the code they test
-- Use Vitest globals (`describe`, `it`, `expect`, `beforeEach`) — no imports needed for them
+- Use Vitest globals (`describe`, `it`, `expect`, `beforeEach`) - no imports needed for them
 - Mock `fetch` in storage tests (`src/lib/storage.ts` is API-based)
 - Keep team stats logic tested via pure helper (`buildTeamStats`)
 - Test pure logic (scoring) separately from storage side-effects
@@ -101,7 +101,7 @@ If any required item cannot be completed (for example, missing testability in le
 1. Edit `src/data/assessmentTemplate.ts`
 2. Add questions with unique `id` (`p{n}-q{n}` convention)
 3. Add at least one `Recommendation` per score band (`maxScoreInclusive: 12 | 24 | 36`)
-4. Hints must follow the format: `"1 = foundational text · 2 = disciplined text · 3 = optimized text · 4 = strategic text"` — parsed into colored bullets by `HintToggle`
+4. Hints must follow the format: `"1 = foundational text · 2 = disciplined text · 3 = optimized text · 4 = strategic text"` - parsed into colored bullets by `HintToggle`
 5. Keep `weight` values summing to 1.0 across all categories
 6. Run `npm test && npm run build` to confirm nothing regressed
 
@@ -133,10 +133,10 @@ The project includes an automated repository analysis prompt (`prompts/repo-anal
 
 ## Common Gotchas
 
-- **Don't add `"use client"` to `src/lib/*.ts`** — they're plain TypeScript modules
-- **Don't instantiate `PrismaClient` in multiple files** — use `src/lib/prisma.ts`
-- **Don't call Prisma from client components** — use `/api/*` route handlers
-- **Don't use `0–3` scale** — the scale is `1–4`; `ScoreValue` enforces this
-- **Don't use normalized scores** — use raw 0–48 scale for thresholds and score levels
-- **`AssessmentApp.tsx` is a legacy entry point** — the active form is `AssessmentForm.tsx`
-- **`vitest.config.ts`** sets the `@` path alias to `src/` — use `@/lib/...` in imports
+- **Don't add `"use client"` to `src/lib/*.ts`**: they're plain TypeScript modules
+- **Don't instantiate `PrismaClient` in multiple files**: use `src/lib/prisma.ts`
+- **Don't call Prisma from client components**: use `/api/*` route handlers
+- **Don't use `0-3` scale**: the scale is `1-4`; `ScoreValue` enforces this
+- **Don't use normalized scores**: use raw 0-48 scale for thresholds and score levels
+- **`AssessmentApp.tsx` is a legacy entry point**: the active form is `AssessmentForm.tsx`
+- **`vitest.config.ts`** sets the `@` path alias to `src/` - use `@/lib/...` in imports

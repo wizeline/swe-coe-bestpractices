@@ -1,32 +1,32 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 
-export type ToolingCalloutKind = "do-this" | "why-it-works" | "how-to";
+export type PlaybookCalloutKind = "do-this" | "why-it-works" | "how-to";
 
-export interface ToolingCallout {
-  kind: ToolingCalloutKind;
+export interface PlaybookCallout {
+  kind: PlaybookCalloutKind;
   title: string;
   markdown: string;
 }
 
-export interface ToolingPlay {
+export interface PlaybookPlay {
   slug: string;
   title: string;
   introMarkdown: string;
-  callouts: ToolingCallout[];
+  callouts: PlaybookCallout[];
 }
 
-export interface ToolingSection {
+export interface PlaybookSection {
   slug: string;
   title: string;
   introMarkdown: string;
-  plays: ToolingPlay[];
+  plays: PlaybookPlay[];
 }
 
-export interface ToolingContent {
+export interface PlaybookContent {
   title: string;
   introMarkdown: string;
-  sections: ToolingSection[];
+  sections: PlaybookSection[];
 }
 
 function slugify(value: string): string {
@@ -64,7 +64,7 @@ function splitByHeading(source: string, pattern: RegExp) {
   };
 }
 
-function toCalloutKind(heading: string): ToolingCalloutKind | null {
+function toCalloutKind(heading: string): PlaybookCalloutKind | null {
   const normalized = heading.trim().toLowerCase().replace(/[?!]/g, "");
 
   if (normalized === "do this") {
@@ -82,7 +82,7 @@ function toCalloutKind(heading: string): ToolingCalloutKind | null {
   return null;
 }
 
-function parseToolingPlay(title: string, markdown: string): ToolingPlay {
+function parsePlaybookPlay(title: string, markdown: string): PlaybookPlay {
   const { introMarkdown, entries } = splitByHeading(markdown, /^####\s+(.+)$/gm);
 
   return {
@@ -107,7 +107,7 @@ function parseToolingPlay(title: string, markdown: string): ToolingPlay {
   };
 }
 
-export function parseToolingMarkdown(source: string): ToolingContent {
+export function parsePlaybookMarkdown(source: string): PlaybookContent {
   const normalized = source.trim();
 
   if (!normalized) {
@@ -144,15 +144,15 @@ export function parseToolingMarkdown(source: string): ToolingContent {
         introMarkdown: playBlocks.introMarkdown,
         plays:
           playBlocks.entries.length > 0
-            ? playBlocks.entries.map((play) => parseToolingPlay(play.heading, play.markdown))
-            : [parseToolingPlay(entry.heading, entry.markdown)],
+            ? playBlocks.entries.map((play) => parsePlaybookPlay(play.heading, play.markdown))
+            : [parsePlaybookPlay(entry.heading, entry.markdown)],
       };
     }),
   };
 }
 
-export async function loadToolingContent(): Promise<ToolingContent> {
-  const filePath = path.join(process.cwd(), "content", "tooling.md");
+export async function loadPlaybookContent(): Promise<PlaybookContent> {
+  const filePath = path.join(process.cwd(), "content", "playbook.md");
   const source = await readFile(filePath, "utf8");
-  return parseToolingMarkdown(source);
+  return parsePlaybookMarkdown(source);
 }

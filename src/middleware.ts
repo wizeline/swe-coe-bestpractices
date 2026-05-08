@@ -7,13 +7,13 @@ export default auth((request) => {
     return NextResponse.next();
   }
 
-  const { pathname } = request.nextUrl;
+  const { pathname, search } = request.nextUrl;
   if (pathname.startsWith("/api/")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const loginUrl = new URL("/login", request.url);
-  loginUrl.searchParams.set("callbackUrl", pathname);
+  loginUrl.searchParams.set("callbackUrl", pathname + search);
   return NextResponse.redirect(loginUrl);
 });
 

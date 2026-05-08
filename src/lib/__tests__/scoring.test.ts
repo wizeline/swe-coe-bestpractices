@@ -223,6 +223,24 @@ describe("calculateAssessment", () => {
         expect(rec.maxScoreInclusive).toBeGreaterThanOrEqual(catB.score);
       });
     });
+
+    it("selects recommendation matching the overall score band", () => {
+      // totalScore=3 (3×1) → Foundational (< 13) → r1 (maxScoreInclusive=12)
+      const foundational = calculateAssessment(minimalModel, { q1: 1, q2: 1, q3: 1 });
+      expect(foundational.categories.find((c) => c.id === "cat-a")!.suggestions[0]?.id).toBe("r1");
+
+      // totalScore=13 (13×1) → Disciplined (13–24) → tr2 (maxScoreInclusive=24)
+      const disciplined = calculateAssessment(thresholdModel, thresholdAnswers(1));
+      expect(disciplined.categories.find((c) => c.id === "cat-t")!.suggestions[0]?.id).toBe("tr2");
+
+      // totalScore=26 (13×2) → Optimized (25–36) → tr3 (maxScoreInclusive=36)
+      const optimized = calculateAssessment(thresholdModel, thresholdAnswers(2));
+      expect(optimized.categories.find((c) => c.id === "cat-t")!.suggestions[0]?.id).toBe("tr3");
+
+      // totalScore=52 (13×4) → Strategic (≥37) → no suggestions (all thresholds exceeded)
+      const strategic = calculateAssessment(thresholdModel, thresholdAnswers(4));
+      expect(strategic.categories.find((c) => c.id === "cat-t")!.suggestions).toHaveLength(0);
+    });
   });
 
   describe("edge cases", () => {

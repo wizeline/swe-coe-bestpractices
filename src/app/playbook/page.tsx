@@ -2,7 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import { auth } from "@/auth";
-import { loadToolingContent } from "@/lib/toolingContent";
+import { loadPlaybookContent } from "@/lib/playbookContent";
 
 const CALLOUT_LABELS = {
   "do-this": "Do this",
@@ -10,15 +10,15 @@ const CALLOUT_LABELS = {
   "how-to": "How to",
 } as const;
 
-export default async function ToolingPage() {
+export default async function PlaybookPage() {
   const session = await auth();
   const userEmail = session?.user?.email;
 
   if (!userEmail) {
-    redirect("/login?callbackUrl=/tooling");
+    redirect("/login?callbackUrl=/playbook");
   }
 
-  const content = await loadToolingContent();
+  const content = await loadPlaybookContent();
 
   return (
     <section className="page-container tooling-page">
@@ -26,7 +26,7 @@ export default async function ToolingPage() {
         <div>
           <h1>{content.title}</h1>
           <p>
-            Practical guidance by pillar for teams using AI assistance, lightweight templates, or fully manual workflows.
+            Practical guidance by pillar to turn assessment recommendations into concrete engineering habits.
           </p>
         </div>
         <Link href="/dashboard" className="button ghost tooling-header-link">
@@ -88,8 +88,8 @@ export default async function ToolingPage() {
         </div>
       ) : (
         <article className="card tooling-empty-state">
-          <h2>No tooling sections yet</h2>
-          <p>Add `## Pillar ...` sections to `content/tooling.md` to populate this page.</p>
+          <h2>No playbook sections yet</h2>
+          <p>Add `## Pillar ...` sections to `content/playbook.md` to populate this page.</p>
         </article>
       )}
     </section>

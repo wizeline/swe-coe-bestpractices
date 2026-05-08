@@ -1,4 +1,4 @@
-# Technical Reference — SWE Best Practices Pulse
+# Technical Reference - SWE Best Practices Pulse
 
 Engineering guide for running, developing, and deploying the application.  
 For product context and scoring definition see [PRODUCT.md](PRODUCT.md).
@@ -37,14 +37,14 @@ Required auth variables:
 
 Optional configuration variables:
 
-- `NEXT_PUBLIC_MAX_RECOMMENDATIONS` (default: 1) — Number of action items to display per pillar in assessment results and team reports. Use `NEXT_PUBLIC_` prefix to make it accessible on the client.
+- `NEXT_PUBLIC_MAX_RECOMMENDATIONS` (default: 1) - Number of action items to display per pillar in assessment results and team reports. Use `NEXT_PUBLIC_` prefix to make it accessible on the client.
 
 ## Content-driven AI Tooling View
 
-- Route: `/tooling`
-- Source of truth: `content/tooling.md`
-- Loader/parser: `src/lib/toolingContent.ts`
-- Rendering: server-side page in `src/app/tooling/page.tsx` using `react-markdown`
+- Route: `/playbook`
+- Source of truth: `content/playbook.md`
+- Loader/parser: `src/lib/playbookContent.ts`
+- Rendering: server-side page in `src/app/playbook/page.tsx` using `react-markdown`
 
 The markdown file is intentionally grouped by `## Pillar ...` headings. Inside each pillar, use `###` for a playbook entry and `#### Do this`, `#### Why this works`, and `#### How to` for the colored guidance blocks. The parser keeps intro content separate and turns each pillar heading into a standalone section card so content editors can add or reorder guidance without touching React code.
 
@@ -155,9 +155,9 @@ graph TD
 
 > **Key invariants**
 >
-> - `scoring.ts` is pure — no browser or server APIs
+> - `scoring.ts` is pure - no browser or server APIs
 > - `prisma.ts` owns the singleton Prisma client
-> - `storage.ts` is the only client-side API caller — never query Prisma from components
+> - `storage.ts` is the only client-side API caller - never query Prisma from components
 
 ## Project Structure
 
@@ -179,8 +179,8 @@ src/
 
 Prisma models:
 
-- `AssessmentSession` — owner-created team voting sessions with shareable codes
-- `Submission` — completed assessments with full answer history
+- `AssessmentSession` - owner-created team voting sessions with shareable codes
+- `Submission` - completed assessments with full answer history
 
 Session owners can create and delete their own `AssessmentSession` records from the dashboard.
 Configured admins can access `/admin` to compare all sessions and inspect database-wide activity counts.

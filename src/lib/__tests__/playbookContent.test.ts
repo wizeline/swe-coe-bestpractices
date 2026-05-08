@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { parseToolingMarkdown } from "@/lib/toolingContent";
-import { getToolingHrefForCategory } from "@/lib/toolingLinks";
+import { parsePlaybookMarkdown } from "@/lib/playbookContent";
+import { getPlaybookHrefForCategory } from "@/lib/playbookLinks";
 
-describe("parseToolingMarkdown", () => {
+describe("parsePlaybookMarkdown", () => {
   it("extracts the page title, intro, and pillar sections", () => {
     const source = `# AI Tooling Playbook
 
@@ -36,7 +36,7 @@ Use a checklist.
 
 Write it down.`;
 
-    const result = parseToolingMarkdown(source);
+    const result = parsePlaybookMarkdown(source);
 
     expect(result.title).toBe("AI Tooling Playbook");
     expect(result.introMarkdown).toContain("Intro paragraph.");
@@ -58,7 +58,7 @@ Write it down.`;
   });
 
   it("returns intro-only content when the markdown has no pillar headings", () => {
-    const result = parseToolingMarkdown("# AI Tooling Playbook\n\nOnly intro content.");
+    const result = parsePlaybookMarkdown("# AI Tooling Playbook\n\nOnly intro content.");
 
     expect(result.title).toBe("AI Tooling Playbook");
     expect(result.introMarkdown).toBe("Only intro content.");
@@ -66,7 +66,7 @@ Write it down.`;
   });
 
   it("builds a tooling href for known and unknown categories", () => {
-    expect(getToolingHrefForCategory("pillar-2-design")).toBe("/tooling#pillar-2-design-architecture");
-    expect(getToolingHrefForCategory("unknown-category")).toBe("/tooling");
+    expect(getPlaybookHrefForCategory("pillar-2-design")).toBe("/playbook#pillar-2-design-architecture");
+    expect(getPlaybookHrefForCategory("unknown-category")).toBe("/playbook");
   });
 });

@@ -50,6 +50,14 @@ export const calculateAssessment = (
   model: AssessmentModel,
   answers: AnswerMap,
 ): AssessmentResult => {
+  // Compute totalScore first so suggestion selection uses the correct score band.
+  const totalScore = model.categories.reduce((acc, category) => {
+    const categoryTotal = category.questions.reduce((categoryAcc, question) => {
+      return categoryAcc + (answers[question.id] ?? 0);
+    }, 0);
+    return acc + categoryTotal;
+  }, 0);
+
   const categoryResults: CategoryResult[] = model.categories.map((category) => {
     const questionScores = category.questions
       .map((question) => answers[question.id])
@@ -65,7 +73,7 @@ export const calculateAssessment = (
       total: category.questions.length,
       weight: category.weight,
       suggestions: getCategorySuggestions(
-        categoryScore,
+        totalScore,
         [...category.recommendations].sort(
           (a, b) => a.maxScoreInclusive - b.maxScoreInclusive,
         ),
@@ -93,13 +101,6 @@ export const calculateAssessment = (
 
   const overall = weightTotal === 0 ? 0 : weightedScoreSum / weightTotal;
   const completion = totalQuestions === 0 ? 0 : (totalAnswered / totalQuestions) * 100;
-  const totalScore = model.categories.reduce((acc, category) => {
-    const categoryTotal = category.questions.reduce((categoryAcc, question) => {
-      return categoryAcc + (answers[question.id] ?? 0);
-    }, 0);
-
-    return acc + categoryTotal;
-  }, 0);
   const maxScore = totalQuestions * 4;
 
   return {
