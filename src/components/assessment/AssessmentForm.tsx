@@ -7,6 +7,7 @@ import { clearDraft, loadDraft, saveDraft } from "@/lib/draftStorage";
 import { parseHintBullets } from "@/lib/questionOptions";
 import { calculateAssessment } from "@/lib/scoring";
 import { addSubmission, getSessionByCode } from "@/lib/storage";
+import { ErrorToast } from "@/components/assessment/ErrorToast";
 import { AnswerMap, AssessmentSessionRecord, ScoreValue } from "@/types/assessment";
 
 const scaleConfig: { value: ScoreValue; label: string }[] = [
@@ -31,6 +32,7 @@ export function AssessmentForm({ userEmail, initialSessionCode }: AssessmentForm
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [assessmentSession, setAssessmentSession] = useState<AssessmentSessionRecord | null>(null);
   const [sessionError, setSessionError] = useState("");
+  const [toastError, setToastError] = useState("");
 
   const totalPillars = assessmentTemplate.categories.length;
   const activeCategory = assessmentTemplate.categories[currentPillar];
@@ -53,6 +55,7 @@ export function AssessmentForm({ userEmail, initialSessionCode }: AssessmentForm
         }
       } catch (error) {
         console.error("Draft load error:", error);
+        setToastError(error instanceof Error ? error.message : "Failed to load data.");
       } finally {
         if (active) {
           setIsLoadingDraft(false);
@@ -108,8 +111,8 @@ export function AssessmentForm({ userEmail, initialSessionCode }: AssessmentForm
       await clearDraft(sessionKey);
       router.push(initialSessionCode ? `/dashboard?session=${encodeURIComponent(initialSessionCode)}` : "/dashboard");
     } catch (error) {
-      setFormError("Failed to submit. Please try again.");
       console.error("Submission error:", error);
+      setToastError(error instanceof Error ? error.message : "Failed to submit assessment.");
     } finally {
       setIsSubmitting(false);
     }

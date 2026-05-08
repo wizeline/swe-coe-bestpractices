@@ -15,6 +15,7 @@ import {
   loadOwnedSessions,
   loadTeamSubmissions,
 } from "@/lib/storage";
+import { ErrorToast } from "@/components/assessment/ErrorToast";
 import { AssessmentResult, AssessmentSessionRecord, SubmissionRecord, TeamStats } from "@/types/assessment";
 
 interface DashboardViewProps {
@@ -46,6 +47,7 @@ export function DashboardView({ userEmail, initialSessionCode }: DashboardViewPr
   const [isCreatingSession, setIsCreatingSession] = useState(false);
   const [deletingSessionId, setDeletingSessionId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [toastError, setToastError] = useState("");
   const sessionCode = searchParams.get("session")?.trim().toUpperCase() ?? initialSessionCode;
   const canShowTeamView = Boolean(selectedSession?.isOwner);
   const isSessionView = Boolean(selectedSession);
@@ -77,6 +79,7 @@ export function DashboardView({ userEmail, initialSessionCode }: DashboardViewPr
         }
       } catch (error) {
         console.error("Dashboard load error:", error);
+        setToastError(error instanceof Error ? error.message : "Failed to load dashboard data.");
         if (active) {
           setUserSubmission(null);
           setSelectedSession(null);
@@ -110,7 +113,7 @@ export function DashboardView({ userEmail, initialSessionCode }: DashboardViewPr
       router.push(`/dashboard?session=${encodeURIComponent(created.code)}`);
     } catch (error) {
       console.error("Session create error:", error);
-      setSessionError("Failed to create session. Please try again.");
+      setToastError(error instanceof Error ? error.message : "Failed to create session.");
       setIsCreatingSession(false);
     }
   };
@@ -147,7 +150,7 @@ export function DashboardView({ userEmail, initialSessionCode }: DashboardViewPr
       }
     } catch (error) {
       console.error("Session delete error:", error);
-      setSessionError("Failed to delete session. Please try again.");
+      setToastError(error instanceof Error ? error.message : "Failed to delete session.");
     } finally {
       setDeletingSessionId(null);
     }
@@ -200,6 +203,7 @@ export function DashboardView({ userEmail, initialSessionCode }: DashboardViewPr
 
   return (
     <div className="dashboard-shell">
+      <ErrorToast message={toastError} onClose={() => setToastError("")} />
       {!isSessionView && (
         <SessionHub
           ownedSessions={ownedSessions}

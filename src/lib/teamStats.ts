@@ -31,15 +31,39 @@ export function buildTeamStats(submissions: SubmissionRecord[]): TeamStats {
   const categorySuggestions: Record<string, TeamStats["categorySuggestions"][string]> = {};
 
   if (submissions.length > 0) {
-    const categoryCount = submissions[0].result.categories.length;
-    for (let i = 0; i < categoryCount; i += 1) {
-      const categoryScores = submissions.map((submission) => submission.result.categories[i].score);
-      const categoryId = submissions[0].result.categories[i].id;
+    const categoryIds = Array.from(
+      new Set(
+        submissions.flatMap((submission) => submission.result.categories.map((category) => category.id)),
+      ),
+    );
+
+    for (const categoryId of categoryIds) {
+      const categoryEntries = submissions
+        .map((submission) => submission.result.categories.find((category) => category.id === categoryId))
+        .filter((entry): entry is SubmissionRecord["result"]["categories"][number] => Boolean(entry));
+
+      if (categoryEntries.length === 0) {
+        continue;
+      }
+
+      const categoryScores = categoryEntries.map((entry) => entry.score);
       const averageScore = Number(
         (categoryScores.reduce((a, b) => a + b, 0) / categoryScores.length).toFixed(2),
       );
 
       categoryAverages[categoryId] = averageScore;
+
+      const suggestionsFromSubmissions = categoryEntries
+        .flatMap((entry) => entry.suggestions)
+        .filter((suggestion, index, array) => {
+          return array.findIndex((item) => item.id === suggestion.id) === index;
+        })
+        .slice(0, MAX_RECOMMENDATIONS_PER_PILLAR);
+
+      if (suggestionsFromSubmissions.length > 0) {
+        categorySuggestions[categoryId] = suggestionsFromSubmissions;
+        continue;
+      }
 
       const categoryTemplate = assessmentTemplate.categories.find((category) => category.id === categoryId);
       categorySuggestions[categoryId] = categoryTemplate

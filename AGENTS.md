@@ -105,6 +105,32 @@ If any required item cannot be completed (for example, missing testability in le
 5. Keep `weight` values summing to 1.0 across all categories
 6. Run `npm test && npm run build` to confirm nothing regressed
 
+## Repository Analysis Prompt
+
+The project includes an automated repository analysis prompt (`prompts/repo-analysis.md`) that allows engineers to score their repositories without manual input. The prompt analyzes observable signals (commit history, test coverage, CI/CD configuration, documentation, code organization) and generates a maturity score.
+
+### Maintaining the Prompt
+
+1. **Scoring rules must stay in sync with `src/lib/scoring.ts`:**
+   - Maturity thresholds in the prompt must match `getMaturityLabel()` thresholds
+   - Pillar-scoring logic must align with `calculateAssessment()` logic
+   - When scoring logic changes, update the prompt immediately
+
+2. **Pillar definitions:**
+   - Prompt defines 5 pillars with 2-3 questions each (14 total)
+   - Questions and scoring rubrics must match `src/data/assessmentTemplate.ts` intent
+   - Each question has a 1–4 scale with rubrics describing each level
+
+3. **JSON output format:**
+   - Prompt generates a JSON object with `email`, `analysis`, `raw_score`, `maturity_level`
+   - This JSON is submitted via POST to `/api/submissions/analysis`
+   - The backend creates a `Submission` record with parsed data
+
+4. **Frontend integration:**
+   - `RepositoryAnalysisSubmission` component handles JSON input and submission
+   - Validation occurs on both client (format check) and server (payload validation)
+   - Results are stored identically to questionnaire submissions for unified reporting
+
 ## Common Gotchas
 
 - **Don't add `"use client"` to `src/lib/*.ts`** — they're plain TypeScript modules

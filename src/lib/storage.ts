@@ -1,5 +1,6 @@
 import { buildTeamStats } from "@/lib/teamStats";
 import {
+  AnalysisSubmissionResponse,
   AssessmentSessionRecord,
   AnswerMap,
   AssessmentResult,
@@ -17,7 +18,18 @@ async function requestJson<T>(input: string, init?: RequestInit): Promise<T> {
   });
 
   if (!response.ok) {
-    throw new Error(`Request failed with status ${response.status}`);
+    let message = `Request failed with status ${response.status}`;
+
+    try {
+      const payload = (await response.json()) as { error?: unknown };
+      if (typeof payload?.error === "string" && payload.error.trim()) {
+        message = payload.error;
+      }
+    } catch {
+      // Keep fallback message when response body is not JSON.
+    }
+
+    throw new Error(message);
   }
 
   return (await response.json()) as T;
@@ -88,4 +100,31 @@ export async function deleteSubmission(id: string): Promise<void> {
   await requestJson(`/api/submissions/${encodeURIComponent(id)}`, {
     method: "DELETE",
   });
+}
+
+export async function submitRepositoryAnalysis(analysisData: string): Promise<AnalysisSubmissionResponse> {
+  let payload: unknown;
+  try {
+    payload = JSON.parse(analysisData);
+  } catch {
+    throw new Error("Invalid JSON format");
+  }
+
+  if (isInsufficientDataError(payload)) {
+    const reason = (payload as { reason?: string }).reason ?? "Provide more context and re-run the analysis prompt.";
+    throw new Error(`Cannot submit: insufficient repository data. ${reason}`);
+  }
+
+  return requestJson<AnalysisSubmissionResponse>("/api/submissions/analysis", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function isInsufficientDataError(payload: unknown): boolean {
+  return (
+    typeof payload === "object" &&
+    payload !== null &&
+    (payload as Record<string, unknown>).error === "INSUFFICIENT_DATA"
+  );
 }

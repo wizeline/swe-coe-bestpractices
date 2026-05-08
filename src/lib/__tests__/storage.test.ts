@@ -8,11 +8,13 @@ import {
   deleteSubmission,
   getSessionByCode,
   getLatestSubmissionByEmail,
+  isInsufficientDataError,
   loadAllSubmissions,
   loadOwnedSessions,
   loadTeamSubmissions,
+  submitRepositoryAnalysis,
 } from "@/lib/storage";
-import type { AssessmentResult, AssessmentSessionRecord, SubmissionRecord } from "@/types/assessment";
+import type { AnalysisSubmissionResponse, AssessmentResult, AssessmentSessionRecord, SubmissionRecord } from "@/types/assessment";
 
 const makeResult = (overallScore: number, totalScore = overallScore, maxScore = 4): AssessmentResult => ({
   overallScore,
@@ -107,6 +109,7 @@ describe("submission API storage", () => {
     mockJsonResponse([]);
 
     await expect(loadAllSubmissions()).resolves.toEqual([]);
+
     expect(mockFetch).toHaveBeenCalledWith(
       "/api/submissions",
       expect.objectContaining({ headers: expect.any(Object) }),
@@ -122,6 +125,84 @@ describe("submission API storage", () => {
       "/api/submissions/sub-77",
       expect.objectContaining({ method: "DELETE" }),
     );
+  });
+
+  it("submits repository analysis with valid JSON", async () => {
+    const analysisPayload = {
+      email: "analyst@example.com",
+      analysis: {
+        pillars: {
+          pillar_1_ideation: { title: "Ideation", questions: [], pillar_score: 3 },
+          pillar_2_code: { title: "Code", questions: [], pillar_score: 3 },
+          pillar_3_testing: { title: "Testing", questions: [], pillar_score: 2 },
+          pillar_4_documentation: { title: "Docs", questions: [], pillar_score: 2 },
+          pillar_5_operations: { title: "Operations", questions: [], pillar_score: 2 },
+        },
+        raw_score: 24,
+        maturity_level: "Disciplined" as const,
+      },
+    };
+
+    const response: AnalysisSubmissionResponse = {
+      id: "sub-analysis-1",
+      email: "analyst@example.com",
+      totalScore: 24,
+      maxScore: 56,
+      maturityLabel: "Disciplined",
+      submittedAt: new Date().toISOString(),
+    };
+
+    mockJsonResponse(response, true, 201);
+
+    const result = await submitRepositoryAnalysis(JSON.stringify(analysisPayload));
+    expect(result).toEqual(response);
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      "/api/submissions/analysis",
+      expect.objectContaining({
+        method: "POST",
+        body: JSON.stringify(analysisPayload),
+      }),
+    );
+  });
+
+  it("rejects invalid JSON for repository analysis", async () => {
+    await expect(submitRepositoryAnalysis("{ invalid json }")).rejects.toThrow("Invalid JSON format");
+  });
+
+  it("rejects INSUFFICIENT_DATA payload with reason", async () => {
+    const payload = { error: "INSUFFICIENT_DATA", reason: "No commit history provided." };
+    await expect(submitRepositoryAnalysis(JSON.stringify(payload))).rejects.toThrow(
+      "Cannot submit: insufficient repository data. No commit history provided.",
+    );
+  });
+
+  it("rejects INSUFFICIENT_DATA payload without reason using fallback message", async () => {
+    const payload = { error: "INSUFFICIENT_DATA" };
+    await expect(submitRepositoryAnalysis(JSON.stringify(payload))).rejects.toThrow(
+      "Cannot submit: insufficient repository data.",
+    );
+  });
+});
+
+describe("isInsufficientDataError", () => {
+  it("returns true for INSUFFICIENT_DATA error object", () => {
+    expect(isInsufficientDataError({ error: "INSUFFICIENT_DATA" })).toBe(true);
+    expect(isInsufficientDataError({ error: "INSUFFICIENT_DATA", reason: "Missing CI config." })).toBe(true);
+  });
+
+  it("returns false for valid analysis payload", () => {
+    expect(isInsufficientDataError({ analysis: { pillars: {} } })).toBe(false);
+  });
+
+  it("returns false for non-object values", () => {
+    expect(isInsufficientDataError(null)).toBe(false);
+    expect(isInsufficientDataError("INSUFFICIENT_DATA")).toBe(false);
+    expect(isInsufficientDataError(42)).toBe(false);
+  });
+
+  it("returns false for object with different error code", () => {
+    expect(isInsufficientDataError({ error: "SOME_OTHER_ERROR" })).toBe(false);
   });
 });
 

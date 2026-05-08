@@ -65,6 +65,15 @@ export interface SubmissionRecord {
   submittedAt: string;
 }
 
+export interface AnalysisSubmissionResponse {
+  id: string;
+  email: string;
+  totalScore: number;
+  maxScore: number;
+  maturityLabel: AssessmentResult["maturityLabel"];
+  submittedAt: string;
+}
+
 export interface AssessmentSessionRecord {
   id: string;
   code: string;
