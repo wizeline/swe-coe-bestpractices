@@ -5,7 +5,7 @@ import { AssessmentSessionRecord } from "@/types/assessment";
 
 function toSessionRecord(
   session: { id: string; code: string; name: string; ownerEmail: string; createdAt: Date },
-  currentEmail: string,
+  currentEmail: string
 ): AssessmentSessionRecord {
   return {
     id: session.id,

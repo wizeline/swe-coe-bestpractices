@@ -56,7 +56,12 @@ function makeResult(totalScore: number, completion = 100): AssessmentResult {
   };
 }
 
-function makeSubmission(id: string, email: string, totalScore: number, submittedAt: string): SubmissionRecord {
+function makeSubmission(
+  id: string,
+  email: string,
+  totalScore: number,
+  submittedAt: string
+): SubmissionRecord {
   return {
     id,
     email,
@@ -119,22 +124,26 @@ describe("buildCrossTeamComparison", () => {
 
     expect(comparison.databaseStats).toEqual(databaseStats);
     expect(comparison.sessions).toHaveLength(2);
-    expect(comparison.sessions[0]).toEqual(expect.objectContaining({
-      id: "session-2",
-      averageTotalScore: 40,
-      totalSubmissions: 1,
-      uniqueParticipants: 1,
-      scoreLevel: "Strategic",
-      latestSubmissionAt: "2026-04-24T11:30:00.000Z",
-    }));
-    expect(comparison.sessions[1]).toEqual(expect.objectContaining({
-      id: "session-1",
-      averageTotalScore: 20,
-      totalSubmissions: 2,
-      uniqueParticipants: 2,
-      scoreLevel: "Disciplined",
-      latestSubmissionAt: "2026-04-24T10:45:00.000Z",
-    }));
+    expect(comparison.sessions[0]).toEqual(
+      expect.objectContaining({
+        id: "session-2",
+        averageTotalScore: 40,
+        totalSubmissions: 1,
+        uniqueParticipants: 1,
+        scoreLevel: "Strategic",
+        latestSubmissionAt: "2026-04-24T11:30:00.000Z",
+      })
+    );
+    expect(comparison.sessions[1]).toEqual(
+      expect.objectContaining({
+        id: "session-1",
+        averageTotalScore: 20,
+        totalSubmissions: 2,
+        uniqueParticipants: 2,
+        scoreLevel: "Disciplined",
+        latestSubmissionAt: "2026-04-24T10:45:00.000Z",
+      })
+    );
   });
 
   it("handles sessions without submissions", () => {
@@ -155,17 +164,19 @@ describe("buildCrossTeamComparison", () => {
           createdAt: "2026-04-24T09:00:00.000Z",
           submissions: [],
         },
-      ],
+      ]
     );
 
-    expect(comparison.sessions[0]).toEqual(expect.objectContaining({
-      totalSubmissions: 0,
-      uniqueParticipants: 0,
-      averageTotalScore: 0,
-      averageCompletion: 0,
-      scoreLevel: "Foundational",
-      latestSubmissionAt: null,
-    }));
+    expect(comparison.sessions[0]).toEqual(
+      expect.objectContaining({
+        totalSubmissions: 0,
+        uniqueParticipants: 0,
+        averageTotalScore: 0,
+        averageCompletion: 0,
+        scoreLevel: "Foundational",
+        latestSubmissionAt: null,
+      })
+    );
   });
 });
 
@@ -245,21 +256,25 @@ describe("buildTeamDetail", () => {
 
 describe("admin href builders", () => {
   it("builds report href preserving active filters", () => {
-    expect(buildAdminReportHref({
-      fromDate: "2026-04-01",
-      toDate: "2026-04-30",
-      sort: "score-desc",
-    })).toBe("/admin?from=2026-04-01&to=2026-04-30&sort=score-desc");
+    expect(
+      buildAdminReportHref({
+        fromDate: "2026-04-01",
+        toDate: "2026-04-30",
+        sort: "score-desc",
+      })
+    ).toBe("/admin?from=2026-04-01&to=2026-04-30&sort=score-desc");
   });
 
   it("builds team detail href and normalizes session code", () => {
     expect(buildAdminTeamDetailHref(" abc123 ", { sort: "created-desc" })).toBe(
-      "/admin/team/ABC123?sort=created-desc",
+      "/admin/team/ABC123?sort=created-desc"
     );
   });
 
   it("preserves page in report href when page is greater than one", () => {
-    expect(buildAdminReportHrefWithPage({ sort: "created-desc" }, 3)).toBe("/admin?sort=created-desc&page=3");
+    expect(buildAdminReportHrefWithPage({ sort: "created-desc" }, 3)).toBe(
+      "/admin?sort=created-desc&page=3"
+    );
   });
 });
 

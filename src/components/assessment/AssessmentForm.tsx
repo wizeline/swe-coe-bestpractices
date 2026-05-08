@@ -52,7 +52,11 @@ export function AssessmentForm({ userEmail, initialSessionCode }: AssessmentForm
         if (active) {
           setAnswers(draft);
           setAssessmentSession(sessionRecord);
-          setSessionError(initialSessionCode && !sessionRecord ? "Team session not found. Your answers will stay local until you join a valid session." : "");
+          setSessionError(
+            initialSessionCode && !sessionRecord
+              ? "Team session not found. Your answers will stay local until you join a valid session."
+              : ""
+          );
         }
       } catch (error) {
         console.error("Draft load error:", error);
@@ -107,7 +111,9 @@ export function AssessmentForm({ userEmail, initialSessionCode }: AssessmentForm
 
   const handleSubmit = async () => {
     if (answered < total) {
-      setFormError(`${total - answered} question${total - answered > 1 ? "s" : ""} still need a score.`);
+      setFormError(
+        `${total - answered} question${total - answered > 1 ? "s" : ""} still need a score.`
+      );
       return;
     }
     setIsSubmitting(true);
@@ -116,7 +122,11 @@ export function AssessmentForm({ userEmail, initialSessionCode }: AssessmentForm
       const result = calculateAssessment(assessmentTemplate, answers);
       await addSubmission(answers, result, initialSessionCode ?? undefined);
       await clearDraft(sessionKey);
-      router.push(initialSessionCode ? `/dashboard?session=${encodeURIComponent(initialSessionCode)}` : "/dashboard");
+      router.push(
+        initialSessionCode
+          ? `/dashboard?session=${encodeURIComponent(initialSessionCode)}`
+          : "/dashboard"
+      );
     } catch (error) {
       console.error("Submission error:", error);
       setToastError(error instanceof Error ? error.message : "Failed to submit assessment.");
@@ -134,9 +144,7 @@ export function AssessmentForm({ userEmail, initialSessionCode }: AssessmentForm
   };
 
   const answered = Object.values(answers).filter((v) => v !== undefined).length;
-  const total = assessmentTemplate.categories.reduce(
-    (acc, cat) => acc + cat.questions.length, 0,
-  );
+  const total = assessmentTemplate.categories.reduce((acc, cat) => acc + cat.questions.length, 0);
   const progressPct = total === 0 ? 0 : Math.round((answered / total) * 100);
   const activeAnswered = activeCategory
     ? activeCategory.questions.filter((question) => answers[question.id] !== undefined).length
@@ -146,14 +154,21 @@ export function AssessmentForm({ userEmail, initialSessionCode }: AssessmentForm
   return (
     <div>
       {showOnboarding && (
-        <div className="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="onboarding-title">
+        <div
+          className="modal-overlay"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="onboarding-title"
+        >
           <div className="modal-content">
             <h3 id="onboarding-title">Before you start</h3>
             <p>
-              This assessment scores <strong>your personal engineering habits</strong>, not your team&apos;s or project&apos;s practices.
+              This assessment scores <strong>your personal engineering habits</strong>, not your
+              team&apos;s or project&apos;s practices.
             </p>
             <p>
-              Select the option that most honestly describes what <strong>you personally do today</strong>. There are no right or wrong answers.
+              Select the option that most honestly describes what{" "}
+              <strong>you personally do today</strong>. There are no right or wrong answers.
             </p>
             <div className="modal-actions">
               <button
@@ -194,7 +209,10 @@ export function AssessmentForm({ userEmail, initialSessionCode }: AssessmentForm
           </div>
 
           {/* Visual progress bar */}
-          <div className="form-progress" aria-label={`Progress: ${answered} of ${total} questions answered`}>
+          <div
+            className="form-progress"
+            aria-label={`Progress: ${answered} of ${total} questions answered`}
+          >
             <div className="form-progress-bar">
               <div className="form-progress-fill" style={{ width: `${progressPct}%` }} />
             </div>
@@ -205,7 +223,9 @@ export function AssessmentForm({ userEmail, initialSessionCode }: AssessmentForm
 
           <div className="wizard-steps" aria-label="Pillar wizard navigation">
             {assessmentTemplate.categories.map((category, index) => {
-              const categoryAnswered = category.questions.filter((q) => answers[q.id] !== undefined).length;
+              const categoryAnswered = category.questions.filter(
+                (q) => answers[q.id] !== undefined
+              ).length;
               const isDone = categoryAnswered === category.questions.length;
               const isActive = index === currentPillar;
 
@@ -219,7 +239,9 @@ export function AssessmentForm({ userEmail, initialSessionCode }: AssessmentForm
                 >
                   <span className="wizard-step-index">{index + 1}</span>
                   <span className="wizard-step-title">Pillar {index + 1}</span>
-                  <span className="wizard-step-count">{categoryAnswered}/{category.questions.length}</span>
+                  <span className="wizard-step-count">
+                    {categoryAnswered}/{category.questions.length}
+                  </span>
                 </button>
               );
             })}
@@ -229,10 +251,15 @@ export function AssessmentForm({ userEmail, initialSessionCode }: AssessmentForm
         {/* ── Wizard slide (active pillar) ── */}
         <div className="question-groups">
           {activeCategory && (
-            <section key={activeCategory.id} className={`category-block ${activeAnswered === activeTotal ? "category-block--done" : ""}`}>
+            <section
+              key={activeCategory.id}
+              className={`category-block ${activeAnswered === activeTotal ? "category-block--done" : ""}`}
+            >
               <div className="category-title-row">
                 <h3>{activeCategory.title}</h3>
-                <span className={`cat-progress-pill ${activeAnswered === activeTotal ? "cat-progress-pill--done" : ""}`}>
+                <span
+                  className={`cat-progress-pill ${activeAnswered === activeTotal ? "cat-progress-pill--done" : ""}`}
+                >
                   {activeAnswered}/{activeTotal}
                 </span>
               </div>
@@ -251,13 +278,15 @@ export function AssessmentForm({ userEmail, initialSessionCode }: AssessmentForm
                     <legend>
                       <span className="q-index">{qi + 1}</span>
                       {question.text}
-                      <span className={`question-status ${isAnswered ? "question-status--done" : ""}`}>
+                      <span
+                        className={`question-status ${isAnswered ? "question-status--done" : ""}`}
+                      >
                         {isAnswered ? "Answered" : "Pending"}
                       </span>
                     </legend>
 
                     <div className="scale-row" role="radiogroup" aria-label={question.text}>
-                      {scaleConfig.map(({ value, label }) => (
+                      {scaleConfig.map(({ value, label }) =>
                         (() => {
                           const optionGuide = scoreGuides.find((guide) => guide.score === value);
                           const optionDescription = optionGuide?.description ?? "";
@@ -275,7 +304,9 @@ export function AssessmentForm({ userEmail, initialSessionCode }: AssessmentForm
                                 checked={selected === value}
                                 onChange={() => updateAnswer(question.id, value)}
                                 aria-label={`${label}${optionDescription ? `: ${optionDescription}` : ""}`}
-                                aria-describedby={optionDescription ? optionDescriptionId : undefined}
+                                aria-describedby={
+                                  optionDescription ? optionDescriptionId : undefined
+                                }
                               />
                               {optionDescription && (
                                 <span id={optionDescriptionId} className="scale-description">
@@ -285,7 +316,7 @@ export function AssessmentForm({ userEmail, initialSessionCode }: AssessmentForm
                             </label>
                           );
                         })()
-                      ))}
+                      )}
                     </div>
                   </fieldset>
                 );
@@ -296,7 +327,12 @@ export function AssessmentForm({ userEmail, initialSessionCode }: AssessmentForm
 
         {/* ── Footer ── */}
         <div className="form-actions">
-          <button type="button" onClick={handleReset} className="button ghost" aria-label="Reset all answers">
+          <button
+            type="button"
+            onClick={handleReset}
+            className="button ghost"
+            aria-label="Reset all answers"
+          >
             Reset
           </button>
 
@@ -328,7 +364,9 @@ export function AssessmentForm({ userEmail, initialSessionCode }: AssessmentForm
           </div>
         </div>
         {formError && (
-          <p className="form-error" role="alert" aria-live="assertive">{formError}</p>
+          <p className="form-error" role="alert" aria-live="assertive">
+            {formError}
+          </p>
         )}
       </article>
     </div>

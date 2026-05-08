@@ -50,15 +50,9 @@ export function AssessmentApp() {
     sessionStorage.setItem(STORAGE_KEY, JSON.stringify(answers));
   }, [answers]);
 
-  const result = useMemo(
-    () => calculateAssessment(assessmentTemplate, answers),
-    [answers],
-  );
+  const result = useMemo(() => calculateAssessment(assessmentTemplate, answers), [answers]);
 
-  const answered = result.categories.reduce(
-    (acc, category) => acc + category.answered,
-    0,
-  );
+  const answered = result.categories.reduce((acc, category) => acc + category.answered, 0);
   const total = result.categories.reduce((acc, category) => acc + category.total, 0);
 
   const updateAnswer = (questionId: string, value: ScoreValue) => {
@@ -102,9 +96,7 @@ export function AssessmentApp() {
             <section key={category.id} className="category-block">
               <div className="category-title-row">
                 <h3>{category.title}</h3>
-                <span>
-                  Weight {Math.round(category.weight * 100)}%
-                </span>
+                <span>Weight {Math.round(category.weight * 100)}%</span>
               </div>
               <p className="category-description">{category.description}</p>
 
@@ -116,7 +108,9 @@ export function AssessmentApp() {
                     {question.hint ? (
                       <ul className="hint">
                         {([1, 2, 3, 4] as const).map((v) => (
-                          <li key={v}><strong>{v}</strong> — {question.hint![v]}</li>
+                          <li key={v}>
+                            <strong>{v}</strong> — {question.hint![v]}
+                          </li>
                         ))}
                       </ul>
                     ) : null}
@@ -157,10 +151,7 @@ export function AssessmentApp() {
         <p className="score-level">{result.scoreLevel}</p>
 
         <div className="progress-wrap" aria-label="completion">
-          <div
-            className="progress-bar"
-            style={{ width: `${result.completion}%` }}
-          />
+          <div className="progress-bar" style={{ width: `${result.completion}%` }} />
         </div>
         <p className="progress-label">Completion {result.completion}%</p>
 
@@ -183,7 +174,7 @@ export function AssessmentApp() {
                 <h4>{suggestion.title}</h4>
                 <p>{suggestion.action}</p>
               </article>
-            )),
+            ))
           )}
         </section>
 

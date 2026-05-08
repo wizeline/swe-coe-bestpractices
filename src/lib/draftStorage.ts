@@ -8,7 +8,7 @@ function getDraftKey(sessionKey: string): string {
 
 export async function saveDraft(answers: AnswerMap, sessionKey = "personal"): Promise<void> {
   const sanitizedAnswers = Object.fromEntries(
-    Object.entries(answers).filter(([, value]) => value !== undefined),
+    Object.entries(answers).filter(([, value]) => value !== undefined)
   );
 
   localStorage.setItem(getDraftKey(sessionKey), JSON.stringify(sanitizedAnswers));

@@ -16,7 +16,12 @@ import {
   loadTeamSubmissions,
 } from "@/lib/storage";
 import { ErrorToast } from "@/components/assessment/ErrorToast";
-import { AssessmentResult, AssessmentSessionRecord, SubmissionRecord, TeamStats } from "@/types/assessment";
+import {
+  AssessmentResult,
+  AssessmentSessionRecord,
+  SubmissionRecord,
+  TeamStats,
+} from "@/types/assessment";
 
 interface DashboardViewProps {
   userEmail: string;
@@ -132,7 +137,9 @@ export function DashboardView({ userEmail, initialSessionCode }: DashboardViewPr
   };
 
   const handleDeleteSession = async (session: AssessmentSessionRecord) => {
-    const shouldDelete = window.confirm(`Delete session \"${session.name}\"? This cannot be undone.`);
+    const shouldDelete = window.confirm(
+      `Delete session \"${session.name}\"? This cannot be undone.`
+    );
     if (!shouldDelete) {
       return;
     }
@@ -297,7 +304,12 @@ function SessionHub({
           placeholder="Team - Quarter"
           aria-label="Session name"
         />
-        <button type="button" className="button solid" onClick={onCreateSession} disabled={isCreatingSession}>
+        <button
+          type="button"
+          className="button solid"
+          onClick={onCreateSession}
+          disabled={isCreatingSession}
+        >
           {isCreatingSession ? "Creating…" : "Create Session"}
         </button>
       </div>
@@ -307,17 +319,28 @@ function SessionHub({
         <div className="session-list">
           <p className="session-list-heading">Your sessions</p>
           {ownedSessions.map((session) => (
-            <article key={session.id} className={`session-list-item ${selectedSession?.code === session.code ? "session-list-item--active" : ""}`}>
+            <article
+              key={session.id}
+              className={`session-list-item ${selectedSession?.code === session.code ? "session-list-item--active" : ""}`}
+            >
               <div>
                 <strong>{session.name}</strong>
                 <span className="session-code-badge">{session.code}</span>
-                <span className="session-created-at">Created {formatSessionCreatedAt(session.createdAt)}</span>
+                <span className="session-created-at">
+                  Created {formatSessionCreatedAt(session.createdAt)}
+                </span>
               </div>
               <div className="session-list-actions">
-                <a href={`/assessment?session=${encodeURIComponent(session.code)}`} className="button ghost">
+                <a
+                  href={`/assessment?session=${encodeURIComponent(session.code)}`}
+                  className="button ghost"
+                >
                   Voting link
                 </a>
-                <a href={`/dashboard?session=${encodeURIComponent(session.code)}`} className="button solid">
+                <a
+                  href={`/dashboard?session=${encodeURIComponent(session.code)}`}
+                  className="button solid"
+                >
                   Team report
                 </a>
                 <button
@@ -408,16 +431,13 @@ function ScoreCard({ result, email }: ScoreCardProps) {
                   Open playbook
                 </Link>
               </article>
-            )),
+            ))
           )}
           {result.categories.every((c) => c.suggestions.length === 0) && (
-            <p className="no-suggestions">
-              Great job! Keep maintaining these high standards.
-            </p>
+            <p className="no-suggestions">Great job! Keep maintaining these high standards.</p>
           )}
         </section>
       </article>
-
     </div>
   );
 }
@@ -434,7 +454,11 @@ function TeamView({ stats, selectedSession }: TeamViewProps) {
         <div className="team-session-banner-copy">
           <h3>{selectedSession.name}</h3>
           <p>
-            Session code <strong>{selectedSession.code}</strong>. Share <a href={`/assessment?session=${encodeURIComponent(selectedSession.code)}`}>this voting link</a> with your team.
+            Session code <strong>{selectedSession.code}</strong>. Share{" "}
+            <a href={`/assessment?session=${encodeURIComponent(selectedSession.code)}`}>
+              this voting link
+            </a>{" "}
+            with your team.
           </p>
         </div>
         <a href="/dashboard" className="button ghost">
@@ -443,7 +467,9 @@ function TeamView({ stats, selectedSession }: TeamViewProps) {
       </div>
 
       <div className="view-toggle">
-        <button className="toggle-btn active">Team Overview ({stats.uniqueParticipants} people)</button>
+        <button className="toggle-btn active">
+          Team Overview ({stats.uniqueParticipants} people)
+        </button>
       </div>
 
       <div className="team-view">
@@ -453,7 +479,9 @@ function TeamView({ stats, selectedSession }: TeamViewProps) {
             <div className="summary-stats">
               <div className="stat-item">
                 <span className="stat-label">Team Average Score</span>
-                <span className="stat-value">{stats.averageTotalScore.toFixed(1)}/{stats.maxTotalScore}</span>
+                <span className="stat-value">
+                  {stats.averageTotalScore.toFixed(1)}/{stats.maxTotalScore}
+                </span>
               </div>
               <div className="stat-item">
                 <span className="stat-label">Participants</span>
@@ -495,9 +523,11 @@ function TeamView({ stats, selectedSession }: TeamViewProps) {
                     Open playbook
                   </Link>
                 </article>
-              )),
+              ))
             )}
-            {assessmentTemplate.categories.every((category) => (stats.categorySuggestions[category.id] ?? []).length === 0) && (
+            {assessmentTemplate.categories.every(
+              (category) => (stats.categorySuggestions[category.id] ?? []).length === 0
+            ) && (
               <p className="no-suggestions">Not enough team data yet to generate action items.</p>
             )}
           </section>
@@ -523,13 +553,17 @@ function TeamView({ stats, selectedSession }: TeamViewProps) {
                     <tr key={emailAddr}>
                       <td>{emailAddr}</td>
                       <td className="score-cell">
-                        <strong>{latest.result.totalScore}/{latest.result.maxScore}</strong>
+                        <strong>
+                          {latest.result.totalScore}/{latest.result.maxScore}
+                        </strong>
                       </td>
                       <td>{latest.result.completion}%</td>
                       <td>
                         <span className="status-badge">{latest.result.scoreLevel}</span>
                       </td>
-                      <td className="date-cell">{new Date(latest.submittedAt).toLocaleDateString()}</td>
+                      <td className="date-cell">
+                        {new Date(latest.submittedAt).toLocaleDateString()}
+                      </td>
                     </tr>
                   );
                 })}

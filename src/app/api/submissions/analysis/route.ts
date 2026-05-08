@@ -27,7 +27,7 @@ interface AnalysisPayload {
 const STANDARD_PILLAR_IDS = assessmentTemplate.categories.map((category) => category.id);
 const TEMPLATE_MAX_SCORE = assessmentTemplate.categories.reduce(
   (acc, category) => acc + category.questions.length * 4,
-  0,
+  0
 );
 
 function isValidScoreValue(value: number): boolean {
@@ -82,11 +82,19 @@ function validateAnalysisPayload(data: unknown): data is AnalysisPayload {
     return false;
   }
 
-  if (typeof payload.analysis.raw_score !== "number" || payload.analysis.raw_score < 0 || payload.analysis.raw_score > TEMPLATE_MAX_SCORE) {
+  if (
+    typeof payload.analysis.raw_score !== "number" ||
+    payload.analysis.raw_score < 0 ||
+    payload.analysis.raw_score > TEMPLATE_MAX_SCORE
+  ) {
     return false;
   }
 
-  if (!["Foundational", "Disciplined", "Optimized", "Strategic"].includes(payload.analysis.score_level)) {
+  if (
+    !["Foundational", "Disciplined", "Optimized", "Strategic"].includes(
+      payload.analysis.score_level
+    )
+  ) {
     return false;
   }
 
@@ -122,7 +130,7 @@ function validateAnalysisPayload(data: unknown): data is AnalysisPayload {
 export async function POST(request: NextRequest) {
   const session = await auth();
   const userEmail = session?.user?.email?.toLowerCase().trim();
-  
+
   if (!userEmail) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -142,7 +150,8 @@ export async function POST(request: NextRequest) {
     const categories = buildCategoryResults(body);
     const totalAnswered = categories.reduce((acc, category) => acc + category.answered, 0);
     const totalQuestions = categories.reduce((acc, category) => acc + category.total, 0);
-    const completion = totalQuestions === 0 ? 0 : Math.round((totalAnswered / totalQuestions) * 100);
+    const completion =
+      totalQuestions === 0 ? 0 : Math.round((totalAnswered / totalQuestions) * 100);
 
     const weightedSum = categories.reduce((acc, cat) => acc + cat.score * cat.weight, 0);
     const weightTotal = categories.reduce((acc, cat) => acc + cat.weight, 0);
@@ -169,14 +178,17 @@ export async function POST(request: NextRequest) {
       include: { session: { select: { code: true, name: true } } },
     });
 
-    return NextResponse.json({
-      id: created.id,
-      email: created.email,
-      totalScore: created.totalScore,
-      maxScore: created.maxScore,
-      scoreLevel: created.scoreLevel,
-      submittedAt: created.submittedAt.toISOString(),
-    }, { status: 201 });
+    return NextResponse.json(
+      {
+        id: created.id,
+        email: created.email,
+        totalScore: created.totalScore,
+        maxScore: created.maxScore,
+        scoreLevel: created.scoreLevel,
+        submittedAt: created.submittedAt.toISOString(),
+      },
+      { status: 201 }
+    );
   } catch (error) {
     console.error("Error creating submission:", error);
     return NextResponse.json({ error: "Failed to create submission" }, { status: 500 });

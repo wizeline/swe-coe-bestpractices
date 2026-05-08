@@ -116,22 +116,34 @@ describe("calculateAssessment", () => {
     });
 
     it("labels score 12 as Foundational and score 13 as Disciplined (lower boundary)", () => {
-      expect(calculateAssessment(thresholdModel, thresholdScore(12)).scoreLevel).toBe("Foundational");
-      expect(calculateAssessment(thresholdModel, thresholdScore(13)).scoreLevel).toBe("Disciplined");
+      expect(calculateAssessment(thresholdModel, thresholdScore(12)).scoreLevel).toBe(
+        "Foundational"
+      );
+      expect(calculateAssessment(thresholdModel, thresholdScore(13)).scoreLevel).toBe(
+        "Disciplined"
+      );
     });
 
     it("labels score 24 as Disciplined and score 25 as Optimized (mid boundary)", () => {
       // 24 questions scored 1 would require a bigger model; use 6×4=24 and 7×4=28 instead
-      const score24Answers = Object.fromEntries(Array.from({ length: 6 }, (_, i) => [`tq${i}`, 4 as ScoreValue]));
-      const score28Answers = Object.fromEntries(Array.from({ length: 7 }, (_, i) => [`tq${i}`, 4 as ScoreValue]));
+      const score24Answers = Object.fromEntries(
+        Array.from({ length: 6 }, (_, i) => [`tq${i}`, 4 as ScoreValue])
+      );
+      const score28Answers = Object.fromEntries(
+        Array.from({ length: 7 }, (_, i) => [`tq${i}`, 4 as ScoreValue])
+      );
       expect(calculateAssessment(thresholdModel, score24Answers).scoreLevel).toBe("Disciplined");
       expect(calculateAssessment(thresholdModel, score28Answers).scoreLevel).toBe("Optimized");
     });
 
     it("labels score 36 as Optimized and score 37 as Strategic (upper boundary)", () => {
       // 9×4=36, 10×4=40
-      const score36Answers = Object.fromEntries(Array.from({ length: 9 }, (_, i) => [`tq${i}`, 4 as ScoreValue]));
-      const score40Answers = Object.fromEntries(Array.from({ length: 10 }, (_, i) => [`tq${i}`, 4 as ScoreValue]));
+      const score36Answers = Object.fromEntries(
+        Array.from({ length: 9 }, (_, i) => [`tq${i}`, 4 as ScoreValue])
+      );
+      const score40Answers = Object.fromEntries(
+        Array.from({ length: 10 }, (_, i) => [`tq${i}`, 4 as ScoreValue])
+      );
       expect(calculateAssessment(thresholdModel, score36Answers).scoreLevel).toBe("Optimized");
       expect(calculateAssessment(thresholdModel, score40Answers).scoreLevel).toBe("Strategic");
     });
@@ -142,7 +154,9 @@ describe("calculateAssessment", () => {
     });
 
     it("labels all-1 answers as Disciplined (13 questions × 1 = 13)", () => {
-      expect(calculateAssessment(thresholdModel, thresholdAnswers(1)).scoreLevel).toBe("Disciplined");
+      expect(calculateAssessment(thresholdModel, thresholdAnswers(1)).scoreLevel).toBe(
+        "Disciplined"
+      );
     });
 
     it("labels all-2 answers as Optimized (13 questions × 2 = 26)", () => {

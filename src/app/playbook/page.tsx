@@ -26,7 +26,8 @@ export default async function PlaybookPage() {
         <div>
           <h1>{content.title}</h1>
           <p>
-            Practical guidance by pillar to turn assessment recommendations into concrete engineering habits.
+            Practical guidance by pillar to turn assessment recommendations into concrete
+            engineering habits.
           </p>
         </div>
         <Link href="/dashboard" className="button ghost tooling-header-link">
@@ -72,7 +73,10 @@ export default async function PlaybookPage() {
 
                     <div className="tooling-callout-list">
                       {play.callouts.map((callout) => (
-                        <section key={`${play.slug}-${callout.kind}`} className={`tooling-callout tooling-callout--${callout.kind}`}>
+                        <section
+                          key={`${play.slug}-${callout.kind}`}
+                          className={`tooling-callout tooling-callout--${callout.kind}`}
+                        >
                           <h4>{CALLOUT_LABELS[callout.kind]}</h4>
                           <div className="tooling-markdown">
                             <ReactMarkdown>{callout.markdown}</ReactMarkdown>

@@ -264,7 +264,9 @@ body {
   background: #ffffff;
   box-shadow: 0 12px 30px rgba(17, 24, 39, 0.04);
   padding: 20px;
-  transition: border-color 300ms ease, box-shadow 300ms ease;
+  transition:
+    border-color 300ms ease,
+    box-shadow 300ms ease;
 }
 
 .category-block--done {
@@ -810,7 +812,9 @@ body {
   font-size: 1rem;
   padding: 0 14px;
   outline: none;
-  transition: border-color 200ms ease, box-shadow 200ms ease;
+  transition:
+    border-color 200ms ease,
+    box-shadow 200ms ease;
 }
 
 .form-group input:focus {
@@ -1383,7 +1387,10 @@ body {
   padding: 0 14px;
   outline: none;
   font-family: inherit;
-  transition: border-color 200ms ease, box-shadow 200ms ease, background 200ms ease;
+  transition:
+    border-color 200ms ease,
+    box-shadow 200ms ease,
+    background 200ms ease;
 }
 
 .session-create-row input:focus {
@@ -1428,7 +1435,10 @@ body {
   border-radius: var(--radius-md);
   border: 1px solid var(--surface-stroke);
   background: var(--bg-soft);
-  transition: border-color 200ms ease, background 200ms ease, box-shadow 200ms ease;
+  transition:
+    border-color 200ms ease,
+    background 200ms ease,
+    box-shadow 200ms ease;
 }
 
 .session-list-item:hover {

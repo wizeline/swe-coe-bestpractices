@@ -37,9 +37,9 @@ function averageCompletion(submissions: SubmissionRecord[]): number {
     (
       submissions.reduce(
         (total, submission) => total + (submission.completion ?? submission.result.completion),
-        0,
+        0
       ) / submissions.length
-    ).toFixed(1),
+    ).toFixed(1)
   );
 }
 
@@ -57,7 +57,9 @@ export function isAdminEmail(email?: string | null): boolean {
   return configuredAdmins.includes(normalized);
 }
 
-export function buildSessionComparisonRecord(input: SessionComparisonInput): SessionComparisonRecord {
+export function buildSessionComparisonRecord(
+  input: SessionComparisonInput
+): SessionComparisonRecord {
   const stats = buildTeamStats(input.submissions);
   const latestSubmissionAt = input.submissions.at(-1)?.submittedAt ?? null;
 
@@ -80,13 +82,16 @@ export function buildSessionComparisonRecord(input: SessionComparisonInput): Ses
 
 export function buildCrossTeamComparison(
   databaseStats: DatabaseStats,
-  sessions: SessionComparisonInput[],
+  sessions: SessionComparisonInput[]
 ): CrossTeamComparison {
   return {
     databaseStats,
     sessions: sessions
       .map(buildSessionComparisonRecord)
-      .sort((left, right) => right.averageTotalScore - left.averageTotalScore || left.name.localeCompare(right.name)),
+      .sort(
+        (left, right) =>
+          right.averageTotalScore - left.averageTotalScore || left.name.localeCompare(right.name)
+      ),
   };
 }
 
@@ -104,7 +109,7 @@ function toIsoDate(value: string): string {
 
 function sortSessions(
   sessions: SessionComparisonRecord[],
-  sort: AdminSessionSort,
+  sort: AdminSessionSort
 ): SessionComparisonRecord[] {
   const list = [...sessions];
 
@@ -115,14 +120,14 @@ function sortSessions(
     return list.sort(
       (left, right) =>
         right.averageTotalScore - left.averageTotalScore ||
-        right.createdAt.localeCompare(left.createdAt),
+        right.createdAt.localeCompare(left.createdAt)
     );
   }
   if (sort === "score-asc") {
     return list.sort(
       (left, right) =>
         left.averageTotalScore - right.averageTotalScore ||
-        left.createdAt.localeCompare(right.createdAt),
+        left.createdAt.localeCompare(right.createdAt)
     );
   }
 
@@ -131,7 +136,7 @@ function sortSessions(
 
 export function applySessionFilters(
   sessions: SessionComparisonRecord[],
-  filters: AdminSessionFilters,
+  filters: AdminSessionFilters
 ): SessionComparisonRecord[] {
   const fromDate = normalizeFilterDate(filters.fromDate);
   const toDate = normalizeFilterDate(filters.toDate);
@@ -171,7 +176,11 @@ export function buildAdminReportHrefWithPage(filters: AdminSessionFilters, page?
   return query ? `/admin?${query}` : "/admin";
 }
 
-export function buildAdminTeamDetailHref(teamCode: string, filters: AdminSessionFilters, page?: number): string {
+export function buildAdminTeamDetailHref(
+  teamCode: string,
+  filters: AdminSessionFilters,
+  page?: number
+): string {
   const encodedCode = encodeURIComponent(teamCode.trim().toUpperCase());
   const reportHref = buildAdminReportHrefWithPage(filters, page);
   return reportHref === "/admin"
@@ -205,7 +214,7 @@ export function paginateItems<T>(items: T[], page: number, pageSize: number): Pa
 
 export function buildTeamDetail(input: TeamDetailInput): TeamDetailRecord {
   const submissionsSorted = [...input.submissions].sort((left, right) =>
-    left.submittedAt.localeCompare(right.submittedAt),
+    left.submittedAt.localeCompare(right.submittedAt)
   );
   const uniqueParticipants = new Set(submissionsSorted.map((submission) => submission.email)).size;
 

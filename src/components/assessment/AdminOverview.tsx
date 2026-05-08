@@ -5,7 +5,12 @@ import { useRouter } from "next/navigation";
 import { assessmentTemplate } from "@/data/assessmentTemplate";
 import { buildAdminReportHrefWithPage, buildAdminTeamDetailHref } from "@/lib/admin";
 import { formatSessionCreatedAt } from "@/lib/sessionDisplay";
-import { AdminPagination, AdminSessionFilters, CrossTeamComparison, SessionComparisonRecord } from "@/types/assessment";
+import {
+  AdminPagination,
+  AdminSessionFilters,
+  CrossTeamComparison,
+  SessionComparisonRecord,
+} from "@/types/assessment";
 
 type ResetStatus = "invalid-confirmation" | "reset-success" | null;
 
@@ -78,7 +83,12 @@ export function AdminOverview({
         <form method="GET" className="admin-filter-form">
           <div className="admin-filter-field">
             <label htmlFor="admin-filter-from">From</label>
-            <input id="admin-filter-from" type="date" name="from" defaultValue={filters.fromDate ?? ""} />
+            <input
+              id="admin-filter-from"
+              type="date"
+              name="from"
+              defaultValue={filters.fromDate ?? ""}
+            />
           </div>
           <div className="admin-filter-field">
             <label htmlFor="admin-filter-to">To</label>
@@ -94,12 +104,17 @@ export function AdminOverview({
             </select>
           </div>
           <div className="admin-filter-actions">
-            <button type="submit" className="button solid">Apply</button>
-            <a href="/admin" className="button ghost">Clear</a>
+            <button type="submit" className="button solid">
+              Apply
+            </button>
+            <a href="/admin" className="button ghost">
+              Clear
+            </a>
           </div>
         </form>
         <p className="admin-page-meta">
-          Showing {sessions.length} of {pagination.totalItems} sessions · Page {pagination.page} of {pagination.totalPages}
+          Showing {sessions.length} of {pagination.totalItems} sessions · Page {pagination.page} of{" "}
+          {pagination.totalPages}
         </p>
       </section>
 
@@ -113,7 +128,8 @@ export function AdminOverview({
           <div className="modal-content">
             <h3 id="admin-reset-title">Confirm Database Reset</h3>
             <p>
-              This permanently deletes submissions, sessions, last results, and any legacy draft records.
+              This permanently deletes submissions, sessions, last results, and any legacy draft
+              records.
             </p>
             <form action={onResetDatabase}>
               <div className="form-group">
@@ -163,7 +179,9 @@ export function AdminOverview({
             <tbody>
               {sessions.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="admin-empty-cell">No team sessions match the selected filters.</td>
+                  <td colSpan={8} className="admin-empty-cell">
+                    No team sessions match the selected filters.
+                  </td>
                 </tr>
               ) : (
                 sessions.map((session) => (
@@ -182,7 +200,9 @@ export function AdminOverview({
                     </td>
                     <td>{session.ownerEmail}</td>
                     <td className="score-cell">
-                      <strong>{session.averageTotalScore}/{session.maxScore}</strong>
+                      <strong>
+                        {session.averageTotalScore}/{session.maxScore}
+                      </strong>
                     </td>
                     <td>{session.uniqueParticipants}</td>
                     <td>{session.totalSubmissions}</td>
@@ -211,7 +231,10 @@ export function AdminOverview({
               Previous
             </a>
             <a
-              href={buildAdminReportHrefWithPage(filters, Math.min(pagination.totalPages, pagination.page + 1))}
+              href={buildAdminReportHrefWithPage(
+                filters,
+                Math.min(pagination.totalPages, pagination.page + 1)
+              )}
               className={`button ghost ${pagination.page === pagination.totalPages ? "button-disabled" : ""}`}
               aria-disabled={pagination.page === pagination.totalPages}
             >
@@ -236,7 +259,10 @@ export function AdminOverview({
             <tbody>
               {sessions.length === 0 ? (
                 <tr>
-                  <td colSpan={assessmentTemplate.categories.length + 1} className="admin-empty-cell">
+                  <td
+                    colSpan={assessmentTemplate.categories.length + 1}
+                    className="admin-empty-cell"
+                  >
                     No category averages available yet.
                   </td>
                 </tr>

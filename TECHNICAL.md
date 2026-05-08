@@ -203,10 +203,10 @@ npm run build
 
 ## Where To Customize Content
 
-| What | File |
-| ---- | ---- |
+| What                                            | File                             |
+| ----------------------------------------------- | -------------------------------- |
 | Questions, categories, weights, recommendations | `src/data/assessmentTemplate.ts` |
-| Domain types | `src/types/assessment.ts` |
-| Scoring logic | `src/lib/scoring.ts` |
-| Reference prompt templates | `prompts/` |
-| Agent / contributor rules | `AGENTS.md` |
+| Domain types                                    | `src/types/assessment.ts`        |
+| Scoring logic                                   | `src/lib/scoring.ts`             |
+| Reference prompt templates                      | `prompts/`                       |
+| Agent / contributor rules                       | `AGENTS.md`                      |

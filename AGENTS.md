@@ -49,10 +49,10 @@ src/
 
 Prisma models (see `prisma/schema.prisma`):
 
-| Model | Contents |
-| ----- | -------- |
-| `Submission` | Completed assessments (`email`, `answers`, `result`, `submittedAt`) |
-| `AssessmentSession` | Team sessions for group assessments |
+| Model               | Contents                                                            |
+| ------------------- | ------------------------------------------------------------------- |
+| `Submission`        | Completed assessments (`email`, `answers`, `result`, `submittedAt`) |
+| `AssessmentSession` | Team sessions for group assessments                                 |
 
 Never query Prisma directly from client components: use `src/lib/storage.ts` and `/api/*` route handlers.
 

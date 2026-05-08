@@ -23,10 +23,9 @@ export function buildTeamStats(submissions: SubmissionRecord[]): TeamStats {
       ? Number((totalScores.reduce((a, b) => a + b, 0) / totalScores.length).toFixed(1))
       : 0;
 
-  const maxTotalScore = submissions[0]?.result.maxScore ?? assessmentTemplate.categories.reduce(
-    (acc, category) => acc + category.questions.length * 4,
-    0,
-  );
+  const maxTotalScore =
+    submissions[0]?.result.maxScore ??
+    assessmentTemplate.categories.reduce((acc, category) => acc + category.questions.length * 4, 0);
 
   const categoryAverages: Record<string, number> = {};
   const categorySuggestions: Record<string, TeamStats["categorySuggestions"][string]> = {};
@@ -34,14 +33,20 @@ export function buildTeamStats(submissions: SubmissionRecord[]): TeamStats {
   if (submissions.length > 0) {
     const categoryIds = Array.from(
       new Set(
-        submissions.flatMap((submission) => submission.result.categories.map((category) => category.id)),
-      ),
+        submissions.flatMap((submission) =>
+          submission.result.categories.map((category) => category.id)
+        )
+      )
     );
 
     for (const categoryId of categoryIds) {
       const categoryEntries = submissions
-        .map((submission) => submission.result.categories.find((category) => category.id === categoryId))
-        .filter((entry): entry is SubmissionRecord["result"]["categories"][number] => Boolean(entry));
+        .map((submission) =>
+          submission.result.categories.find((category) => category.id === categoryId)
+        )
+        .filter((entry): entry is SubmissionRecord["result"]["categories"][number] =>
+          Boolean(entry)
+        );
 
       if (categoryEntries.length === 0) {
         continue;
@@ -49,7 +54,7 @@ export function buildTeamStats(submissions: SubmissionRecord[]): TeamStats {
 
       const categoryScores = categoryEntries.map((entry) => entry.score);
       const averageScore = Number(
-        (categoryScores.reduce((a, b) => a + b, 0) / categoryScores.length).toFixed(2),
+        (categoryScores.reduce((a, b) => a + b, 0) / categoryScores.length).toFixed(2)
       );
 
       categoryAverages[categoryId] = averageScore;
@@ -66,19 +71,21 @@ export function buildTeamStats(submissions: SubmissionRecord[]): TeamStats {
         continue;
       }
 
-      const categoryTemplate = assessmentTemplate.categories.find((category) => category.id === categoryId);
+      const categoryTemplate = assessmentTemplate.categories.find(
+        (category) => category.id === categoryId
+      );
       categorySuggestions[categoryId] = categoryTemplate
         ? [...categoryTemplate.recommendations]
-          .sort((a, b) => {
-            const aMax = a.band ? SCORE_BANDS[a.band] : (a.maxScoreInclusive ?? 0);
-            const bMax = b.band ? SCORE_BANDS[b.band] : (b.maxScoreInclusive ?? 0);
-            return aMax - bMax;
-          })
-          .filter((item) => {
-            const max = item.band ? SCORE_BANDS[item.band] : (item.maxScoreInclusive ?? 0);
-            return averageScore <= max;
-          })
-          .slice(0, MAX_RECOMMENDATIONS_PER_PILLAR)
+            .sort((a, b) => {
+              const aMax = a.band ? SCORE_BANDS[a.band] : (a.maxScoreInclusive ?? 0);
+              const bMax = b.band ? SCORE_BANDS[b.band] : (b.maxScoreInclusive ?? 0);
+              return aMax - bMax;
+            })
+            .filter((item) => {
+              const max = item.band ? SCORE_BANDS[item.band] : (item.maxScoreInclusive ?? 0);
+              return averageScore <= max;
+            })
+            .slice(0, MAX_RECOMMENDATIONS_PER_PILLAR)
         : [];
     }
   }

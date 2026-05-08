@@ -10,36 +10,36 @@ Internal tool for self-assessing engineering practices across five pillars at a 
 
 Five pillars, each with 2-3 questions scored 1 (Foundational) to 4 (Strategic):
 
-| Pillar | Focus |
-| ------ | ----- |
-| 1 - Ideation and Requirements | Intent Engineering: how rigorously requirements are captured, structured, and traced |
-| 2 - Design and Architecture | Systematic Planning: solution design, pattern reuse, security assessment, CI/CD reliability, and data integrity |
-| 3 - Development | Implementation Hygiene: clean, traceable, well-documented code changes |
-| 4 - Quality Engineering | Validation and Reliability: testing thoroughness, audit practices, regression protection |
-| 5 - Operations and Maintenance | Observability: debuggability, handoff readiness, and operational context |
+| Pillar                         | Focus                                                                                                           |
+| ------------------------------ | --------------------------------------------------------------------------------------------------------------- |
+| 1 - Ideation and Requirements  | Intent Engineering: how rigorously requirements are captured, structured, and traced                            |
+| 2 - Design and Architecture    | Systematic Planning: solution design, pattern reuse, security assessment, CI/CD reliability, and data integrity |
+| 3 - Development                | Implementation Hygiene: clean, traceable, well-documented code changes                                          |
+| 4 - Quality Engineering        | Validation and Reliability: testing thoroughness, audit practices, regression protection                        |
+| 5 - Operations and Maintenance | Observability: debuggability, handoff readiness, and operational context                                        |
 
 ## Scoring Scale
 
 Per-question scale: 1-4 (Foundational to Strategic)  
 Raw score range: 0-64 (16 questions x 4 levels)
 
-| Raw Score | Label | Meaning |
-| --------- | ----- | ------- |
-| 0-12 | Foundational | Rare or ad-hoc personal practice |
-| 13-24 | Disciplined | Informal but consistent individual effort |
-| 25-36 | Optimized | Structured personal habits, applied consistently |
-| 37-64 | Strategic | Deliberate, repeatable approach with continuous personal improvement |
+| Raw Score | Label        | Meaning                                                              |
+| --------- | ------------ | -------------------------------------------------------------------- |
+| 0-12      | Foundational | Rare or ad-hoc personal practice                                     |
+| 13-24     | Disciplined  | Informal but consistent individual effort                            |
+| 25-36     | Optimized    | Structured personal habits, applied consistently                     |
+| 37-64     | Strategic    | Deliberate, repeatable approach with continuous personal improvement |
 
 ## Routes
 
-| Route | Purpose |
-| ----- | ------- |
-| / | Redirects based on auth state |
-| /login | Google sign-in page |
-| /assessment | Individual or team-session voting form (auth required) |
-| /dashboard | Personal results plus owned team session reports (auth required) |
-| /playbook | Markdown-backed engineering playbook organized by pillar (auth required) |
-| /admin | Admin-only cross-team comparison plus database activity stats (auth required) |
+| Route       | Purpose                                                                       |
+| ----------- | ----------------------------------------------------------------------------- |
+| /           | Redirects based on auth state                                                 |
+| /login      | Google sign-in page                                                           |
+| /assessment | Individual or team-session voting form (auth required)                        |
+| /dashboard  | Personal results plus owned team session reports (auth required)              |
+| /playbook   | Markdown-backed engineering playbook organized by pillar (auth required)      |
+| /admin      | Admin-only cross-team comparison plus database activity stats (auth required) |
 
 Team session reports include one prioritized action item per pillar, selected based on the team's average results and relevance to their current score level. The action item shown is the next achievable improvement goal.
 Dashboard session cards show each session's creation date, and the create-session field guides naming with the `Team - Quarter` pattern.
@@ -67,13 +67,14 @@ In addition to the manual questionnaire, engineers can use an automated reposito
 4. **Get analysis**: The AI will analyze the signals and return:
    - A minimal JSON block for dashboard submission
    - A separate private recommendations section for the user
-   The private recommendations are not meant to be stored in the product.
+     The private recommendations are not meant to be stored in the product.
 
    The submission JSON contains:
    - Individual question scores (1-4 per question)
    - Pillar scores
    - Raw score (0-48)
    - Score level (Foundational/Disciplined/Optimized/Strategic)
+
 5. **Submit to dashboard**: Go to `/assessment` → "Repository Analysis" section → paste only the JSON content → submit
 6. **Track progress**: Results appear on your dashboard alongside questionnaire submissions
 

@@ -13,7 +13,10 @@ export default async function AssessmentPage({ searchParams }: AssessmentPagePro
   const session = await auth();
   const userEmail = session?.user?.email;
   const params = await searchParams;
-  const promptContent = await readFile(path.join(process.cwd(), "prompts", "repo-analysis.md"), "utf8");
+  const promptContent = await readFile(
+    path.join(process.cwd(), "prompts", "repo-analysis.md"),
+    "utf8"
+  );
 
   if (!userEmail) {
     redirect("/login?callbackUrl=/assessment");
@@ -25,13 +28,19 @@ export default async function AssessmentPage({ searchParams }: AssessmentPagePro
         <h1>Assessment Form</h1>
         <p>Fill out this form to evaluate your engineering team&apos;s Best Practices Framework.</p>
       </div>
-      <AssessmentForm userEmail={userEmail} initialSessionCode={params.session?.toUpperCase() ?? null} />
-      
+      <AssessmentForm
+        userEmail={userEmail}
+        initialSessionCode={params.session?.toUpperCase() ?? null}
+      />
+
       <div className="divider-section">
         <h2 className="divider-title">Or Submit a Repository Analysis</h2>
-        <p className="divider-description">Use our AI analysis prompt to automatically score your repository based on observable signals.</p>
+        <p className="divider-description">
+          Use our AI analysis prompt to automatically score your repository based on observable
+          signals.
+        </p>
       </div>
-      
+
       <RepositoryAnalysisSubmission userEmail={userEmail} promptContent={promptContent} />
     </section>
   );

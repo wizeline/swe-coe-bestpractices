@@ -30,8 +30,7 @@ export const SCORE_BANDS: Record<RecommendationBand, number> = {
   strategic: Infinity,
 };
 
-const clamp = (value: number, min: number, max: number) =>
-  Math.min(Math.max(value, min), max);
+const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
 
 const average = (values: number[]) => {
   if (values.length === 0) {
@@ -40,9 +39,7 @@ const average = (values: number[]) => {
   return values.reduce((acc, value) => acc + value, 0) / values.length;
 };
 
-export const getScoreLevel = (
-  score: number,
-): AssessmentResult["scoreLevel"] => {
+export const getScoreLevel = (score: number): AssessmentResult["scoreLevel"] => {
   if (score <= SCORE_BANDS.foundational) {
     return "Foundational";
   }
@@ -57,7 +54,7 @@ export const getScoreLevel = (
 
 const getCategorySuggestions = (
   score: number,
-  recommendations: Recommendation[],
+  recommendations: Recommendation[]
 ): Recommendation[] => {
   // Resolve band → numeric threshold at runtime so the template stays symbolic.
   const resolved = recommendations.map((item) => ({
@@ -76,7 +73,7 @@ const getCategorySuggestions = (
 
 export const calculateAssessment = (
   model: AssessmentModel,
-  answers: AnswerMap,
+  answers: AnswerMap
 ): AssessmentResult => {
   // Compute totalScore first so suggestion selection uses the correct score band.
   const totalScore = model.categories.reduce((acc, category) => {
@@ -106,28 +103,19 @@ export const calculateAssessment = (
           const aMax = a.band ? SCORE_BANDS[a.band] : (a.maxScoreInclusive ?? 0);
           const bMax = b.band ? SCORE_BANDS[b.band] : (b.maxScoreInclusive ?? 0);
           return aMax - bMax;
-        }),
+        })
       ),
     };
   });
 
-  const totalAnswered = categoryResults.reduce(
-    (acc, current) => acc + current.answered,
-    0,
-  );
-  const totalQuestions = categoryResults.reduce(
-    (acc, current) => acc + current.total,
-    0,
-  );
+  const totalAnswered = categoryResults.reduce((acc, current) => acc + current.answered, 0);
+  const totalQuestions = categoryResults.reduce((acc, current) => acc + current.total, 0);
 
   const weightedScoreSum = categoryResults.reduce(
     (acc, current) => acc + current.score * current.weight,
-    0,
+    0
   );
-  const weightTotal = categoryResults.reduce(
-    (acc, current) => acc + current.weight,
-    0,
-  );
+  const weightTotal = categoryResults.reduce((acc, current) => acc + current.weight, 0);
 
   const overall = weightTotal === 0 ? 0 : weightedScoreSum / weightTotal;
   const completion = totalQuestions === 0 ? 0 : (totalAnswered / totalQuestions) * 100;

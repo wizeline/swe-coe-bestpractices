@@ -29,11 +29,11 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
       </div>
       <article className="card form-card login-card">
         <div className="login-card-top">
-          <span className="login-badge" aria-hidden="true">Secure access</span>
+          <span className="login-badge" aria-hidden="true">
+            Secure access
+          </span>
           <h2>Welcome back</h2>
-          <p>
-            Sign in with your Wizeline Google account to continue your assessment.
-          </p>
+          <p>Sign in with your Wizeline Google account to continue your assessment.</p>
         </div>
 
         <ul className="login-points" aria-label="Login benefits">
@@ -50,7 +50,9 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
           }}
         >
           <button type="submit" className="button solid login-google-btn">
-            <span className="login-google-mark" aria-hidden="true">G</span>
+            <span className="login-google-mark" aria-hidden="true">
+              G
+            </span>
             <span>Continue with Google</span>
           </button>
           <p className="login-footnote">

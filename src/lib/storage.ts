@@ -38,7 +38,7 @@ async function requestJson<T>(input: string, init?: RequestInit): Promise<T> {
 export async function addSubmission(
   answers: AnswerMap,
   result: AssessmentResult,
-  sessionCode?: string,
+  sessionCode?: string
 ): Promise<SubmissionRecord> {
   return requestJson<SubmissionRecord>("/api/submissions", {
     method: "POST",
@@ -56,10 +56,14 @@ export async function loadAllSubmissions(sessionCode?: string): Promise<Submissi
 }
 
 export async function loadTeamSubmissions(sessionCode: string): Promise<SubmissionRecord[]> {
-  return requestJson<SubmissionRecord[]>(`/api/submissions?sessionCode=${encodeURIComponent(sessionCode)}&team=true`);
+  return requestJson<SubmissionRecord[]>(
+    `/api/submissions?sessionCode=${encodeURIComponent(sessionCode)}&team=true`
+  );
 }
 
-export async function getLatestSubmissionByEmail(sessionCode?: string): Promise<SubmissionRecord | null> {
+export async function getLatestSubmissionByEmail(
+  sessionCode?: string
+): Promise<SubmissionRecord | null> {
   const search = new URLSearchParams({ latest: "true" });
   if (sessionCode) {
     search.set("sessionCode", sessionCode);
@@ -72,7 +76,9 @@ export async function loadOwnedSessions(): Promise<AssessmentSessionRecord[]> {
 }
 
 export async function getSessionByCode(code: string): Promise<AssessmentSessionRecord | null> {
-  return requestJson<AssessmentSessionRecord | null>(`/api/sessions?code=${encodeURIComponent(code)}`);
+  return requestJson<AssessmentSessionRecord | null>(
+    `/api/sessions?code=${encodeURIComponent(code)}`
+  );
 }
 
 export async function createAssessmentSession(name: string): Promise<AssessmentSessionRecord> {
@@ -102,7 +108,9 @@ export async function deleteSubmission(id: string): Promise<void> {
   });
 }
 
-export async function submitRepositoryAnalysis(analysisData: string): Promise<AnalysisSubmissionResponse> {
+export async function submitRepositoryAnalysis(
+  analysisData: string
+): Promise<AnalysisSubmissionResponse> {
   let payload: unknown;
   try {
     payload = JSON.parse(analysisData);
@@ -111,7 +119,9 @@ export async function submitRepositoryAnalysis(analysisData: string): Promise<An
   }
 
   if (isInsufficientDataError(payload)) {
-    const reason = (payload as { reason?: string }).reason ?? "Provide more context and re-run the analysis prompt.";
+    const reason =
+      (payload as { reason?: string }).reason ??
+      "Provide more context and re-run the analysis prompt.";
     throw new Error(`Cannot submit: insufficient repository data. ${reason}`);
   }
 

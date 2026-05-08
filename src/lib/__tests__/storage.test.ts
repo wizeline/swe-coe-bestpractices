@@ -14,9 +14,18 @@ import {
   loadTeamSubmissions,
   submitRepositoryAnalysis,
 } from "@/lib/storage";
-import type { AnalysisSubmissionResponse, AssessmentResult, AssessmentSessionRecord, SubmissionRecord } from "@/types/assessment";
+import type {
+  AnalysisSubmissionResponse,
+  AssessmentResult,
+  AssessmentSessionRecord,
+  SubmissionRecord,
+} from "@/types/assessment";
 
-const makeResult = (overallScore: number, totalScore = overallScore, maxScore = 4): AssessmentResult => ({
+const makeResult = (
+  overallScore: number,
+  totalScore = overallScore,
+  maxScore = 4
+): AssessmentResult => ({
   overallScore,
   totalScore,
   maxScore,
@@ -72,7 +81,7 @@ describe("submission API storage", () => {
           answers: { q1: 3 },
           result: makeResult(3),
         }),
-      }),
+      })
     );
   });
 
@@ -90,7 +99,7 @@ describe("submission API storage", () => {
 
     expect(mockFetch).toHaveBeenCalledWith(
       "/api/submissions?latest=true",
-      expect.objectContaining({ headers: expect.any(Object) }),
+      expect.objectContaining({ headers: expect.any(Object) })
     );
   });
 
@@ -101,7 +110,7 @@ describe("submission API storage", () => {
 
     expect(mockFetch).toHaveBeenCalledWith(
       "/api/submissions?sessionCode=TEAM42&team=true",
-      expect.objectContaining({ headers: expect.any(Object) }),
+      expect.objectContaining({ headers: expect.any(Object) })
     );
   });
 
@@ -112,7 +121,7 @@ describe("submission API storage", () => {
 
     expect(mockFetch).toHaveBeenCalledWith(
       "/api/submissions",
-      expect.objectContaining({ headers: expect.any(Object) }),
+      expect.objectContaining({ headers: expect.any(Object) })
     );
   });
 
@@ -123,7 +132,7 @@ describe("submission API storage", () => {
 
     expect(mockFetch).toHaveBeenCalledWith(
       "/api/submissions/sub-77",
-      expect.objectContaining({ method: "DELETE" }),
+      expect.objectContaining({ method: "DELETE" })
     );
   });
 
@@ -162,25 +171,27 @@ describe("submission API storage", () => {
       expect.objectContaining({
         method: "POST",
         body: JSON.stringify(analysisPayload),
-      }),
+      })
     );
   });
 
   it("rejects invalid JSON for repository analysis", async () => {
-    await expect(submitRepositoryAnalysis("{ invalid json }")).rejects.toThrow("Invalid JSON format");
+    await expect(submitRepositoryAnalysis("{ invalid json }")).rejects.toThrow(
+      "Invalid JSON format"
+    );
   });
 
   it("rejects INSUFFICIENT_DATA payload with reason", async () => {
     const payload = { error: "INSUFFICIENT_DATA", reason: "No commit history provided." };
     await expect(submitRepositoryAnalysis(JSON.stringify(payload))).rejects.toThrow(
-      "Cannot submit: insufficient repository data. No commit history provided.",
+      "Cannot submit: insufficient repository data. No commit history provided."
     );
   });
 
   it("rejects INSUFFICIENT_DATA payload without reason using fallback message", async () => {
     const payload = { error: "INSUFFICIENT_DATA" };
     await expect(submitRepositoryAnalysis(JSON.stringify(payload))).rejects.toThrow(
-      "Cannot submit: insufficient repository data.",
+      "Cannot submit: insufficient repository data."
     );
   });
 });
@@ -188,7 +199,9 @@ describe("submission API storage", () => {
 describe("isInsufficientDataError", () => {
   it("returns true for INSUFFICIENT_DATA error object", () => {
     expect(isInsufficientDataError({ error: "INSUFFICIENT_DATA" })).toBe(true);
-    expect(isInsufficientDataError({ error: "INSUFFICIENT_DATA", reason: "Missing CI config." })).toBe(true);
+    expect(
+      isInsufficientDataError({ error: "INSUFFICIENT_DATA", reason: "Missing CI config." })
+    ).toBe(true);
   });
 
   it("returns false for valid analysis payload", () => {
@@ -215,7 +228,7 @@ describe("session API storage", () => {
 
     expect(mockFetch).toHaveBeenCalledWith(
       "/api/sessions",
-      expect.objectContaining({ headers: expect.any(Object) }),
+      expect.objectContaining({ headers: expect.any(Object) })
     );
   });
 
@@ -234,7 +247,7 @@ describe("session API storage", () => {
 
     expect(mockFetch).toHaveBeenCalledWith(
       "/api/sessions?code=TEAM42",
-      expect.objectContaining({ headers: expect.any(Object) }),
+      expect.objectContaining({ headers: expect.any(Object) })
     );
   });
 
@@ -256,7 +269,7 @@ describe("session API storage", () => {
       expect.objectContaining({
         method: "POST",
         body: JSON.stringify({ name: "Quarterly Review" }),
-      }),
+      })
     );
   });
 
@@ -270,7 +283,7 @@ describe("session API storage", () => {
       expect.objectContaining({
         method: "DELETE",
         body: JSON.stringify({ id: "sess-2" }),
-      }),
+      })
     );
   });
 });

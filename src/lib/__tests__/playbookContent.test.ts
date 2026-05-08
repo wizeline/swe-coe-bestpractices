@@ -66,7 +66,9 @@ Write it down.`;
   });
 
   it("builds a tooling href for known and unknown categories", () => {
-    expect(getPlaybookHrefForCategory("pillar-2-design")).toBe("/playbook#pillar-2-design-architecture");
+    expect(getPlaybookHrefForCategory("pillar-2-design")).toBe(
+      "/playbook#pillar-2-design-architecture"
+    );
     expect(getPlaybookHrefForCategory("unknown-category")).toBe("/playbook");
   });
 });

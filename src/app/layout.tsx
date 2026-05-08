@@ -18,8 +18,7 @@ const ibmPlexMono = IBM_Plex_Mono({
 
 export const metadata: Metadata = {
   title: "Wizeline Best Practices Framework Pulse",
-  description:
-    "Internal POC to assess engineering best practices and improvement opportunities.",
+  description: "Internal POC to assess engineering best practices and improvement opportunities.",
 };
 
 export default async function RootLayout({
@@ -32,10 +31,7 @@ export default async function RootLayout({
   const canViewAdmin = isAdminEmail(userEmail);
 
   return (
-    <html
-      lang="en"
-      className={`${spaceGrotesk.variable} ${ibmPlexMono.variable}`}
-    >
+    <html lang="en" className={`${spaceGrotesk.variable} ${ibmPlexMono.variable}`}>
       <body>
         <div className="shell">
           <nav className="nav-bar">
@@ -66,7 +62,9 @@ export default async function RootLayout({
                         await signOut({ redirectTo: "/login" });
                       }}
                     >
-                      <button type="submit" className="button ghost">Sign out</button>
+                      <button type="submit" className="button ghost">
+                        Sign out
+                      </button>
                     </form>
                   </li>
                 </>

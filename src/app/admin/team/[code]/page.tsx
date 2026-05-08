@@ -3,7 +3,13 @@ import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { buildAdminReportHrefWithPage, buildTeamDetail, isAdminEmail } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
-import { AdminSessionFilters, AdminSessionSort, AnswerMap, AssessmentResult, SubmissionRecord } from "@/types/assessment";
+import {
+  AdminSessionFilters,
+  AdminSessionSort,
+  AnswerMap,
+  AssessmentResult,
+  SubmissionRecord,
+} from "@/types/assessment";
 
 interface AdminTeamDetailPageProps {
   params: Promise<{ code: string }>;
@@ -55,7 +61,10 @@ function toSubmissionRecord(data: {
   };
 }
 
-export default async function AdminTeamDetailPage({ params, searchParams }: AdminTeamDetailPageProps) {
+export default async function AdminTeamDetailPage({
+  params,
+  searchParams,
+}: AdminTeamDetailPageProps) {
   const session = await auth();
   const userEmail = session?.user?.email?.toLowerCase().trim();
   const routeParams = await params;
@@ -116,7 +125,8 @@ export default async function AdminTeamDetailPage({ params, searchParams }: Admi
         <div className="team-session-banner-copy">
           <h3>{detail.name}</h3>
           <p>
-            Session code <strong>{detail.code}</strong>. Track this team&apos;s submission timeline and score evolution over time.
+            Session code <strong>{detail.code}</strong>. Track this team&apos;s submission timeline
+            and score evolution over time.
           </p>
         </div>
         <a href={buildAdminReportHrefWithPage(filters, page)} className="button ghost">
@@ -127,7 +137,8 @@ export default async function AdminTeamDetailPage({ params, searchParams }: Admi
       <section className="submissions-table admin-table-section">
         <h3>Team Detail Timeline</h3>
         <p className="admin-team-meta">
-          Owner {detail.ownerEmail} · Created {new Date(detail.createdAt).toLocaleDateString()} · {detail.uniqueParticipants} participants · {detail.totalSubmissions} submissions
+          Owner {detail.ownerEmail} · Created {new Date(detail.createdAt).toLocaleDateString()} ·{" "}
+          {detail.uniqueParticipants} participants · {detail.totalSubmissions} submissions
         </p>
         <div className="table-wrapper">
           <table>
@@ -144,16 +155,24 @@ export default async function AdminTeamDetailPage({ params, searchParams }: Admi
             <tbody>
               {detail.submissions.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="admin-empty-cell">No submissions yet for this session.</td>
+                  <td colSpan={6} className="admin-empty-cell">
+                    No submissions yet for this session.
+                  </td>
                 </tr>
               ) : (
                 detail.submissions.map((submission) => (
                   <tr key={submission.id}>
-                    <td className="date-cell">{new Date(submission.submittedAt).toLocaleDateString()}</td>
+                    <td className="date-cell">
+                      {new Date(submission.submittedAt).toLocaleDateString()}
+                    </td>
                     <td>{submission.email}</td>
-                    <td className="score-cell">{submission.totalScore}/{submission.maxScore}</td>
+                    <td className="score-cell">
+                      {submission.totalScore}/{submission.maxScore}
+                    </td>
                     <td>{submission.completion}%</td>
-                    <td><span className="status-badge">{submission.scoreLevel}</span></td>
+                    <td>
+                      <span className="status-badge">{submission.scoreLevel}</span>
+                    </td>
                     <td className="score-cell">{submission.runningAverageScore}</td>
                   </tr>
                 ))

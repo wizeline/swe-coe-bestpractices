@@ -2,14 +2,31 @@ import { Prisma } from "@prisma/client";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { AdminOverview } from "@/components/assessment/AdminOverview";
-import { applySessionFilters, buildCrossTeamComparison, isAdminEmail, paginateItems } from "@/lib/admin";
+import {
+  applySessionFilters,
+  buildCrossTeamComparison,
+  isAdminEmail,
+  paginateItems,
+} from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
-import { AdminSessionFilters, AdminSessionSort, AnswerMap, AssessmentResult, SubmissionRecord } from "@/types/assessment";
+import {
+  AdminSessionFilters,
+  AdminSessionSort,
+  AnswerMap,
+  AssessmentResult,
+  SubmissionRecord,
+} from "@/types/assessment";
 
 const RESET_CONFIRMATION = "RESET DATABASE";
 
 interface AdminPageProps {
-  searchParams: Promise<{ status?: string; from?: string; to?: string; sort?: string; page?: string }>;
+  searchParams: Promise<{
+    status?: string;
+    from?: string;
+    to?: string;
+    sort?: string;
+    page?: string;
+  }>;
 }
 
 type ResetStatus = "invalid-confirmation" | "reset-success" | null;
@@ -145,7 +162,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
       ownerEmail: assessmentSession.ownerEmail,
       createdAt: assessmentSession.createdAt.toISOString(),
       submissions: assessmentSession.submissions.map(toSubmissionRecord),
-    })),
+    }))
   );
 
   const filteredSessions = applySessionFilters(comparison.sessions, filters);
@@ -156,8 +173,8 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
       <div className="page-header">
         <h1>Cross-Team Comparison</h1>
         <p>
-          Compare team-session score levels side by side and monitor high-level database activity across assessments,
-          sessions, and saved results.
+          Compare team-session score levels side by side and monitor high-level database activity
+          across assessments, sessions, and saved results.
         </p>
       </div>
       <AdminOverview
