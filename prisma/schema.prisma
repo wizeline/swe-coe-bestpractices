@@ -14,7 +14,7 @@ model Submission {
   totalScore  Int?
   maxScore    Int?
   completion  Int?
-  maturityLabel String?
+  scoreLevel    String?
   answers     Json
   result      Json
   submittedAt DateTime @default(now())

@@ -19,7 +19,7 @@ interface AnalysisPayload {
       };
     };
     raw_score: number;
-    maturity_level: "Foundational" | "Disciplined" | "Optimized" | "Strategic";
+    score_level: "Foundational" | "Disciplined" | "Optimized" | "Strategic";
   };
 }
 
@@ -78,7 +78,7 @@ function validateAnalysisPayload(data: unknown): data is AnalysisPayload {
     return false;
   }
 
-  if (!["Foundational", "Disciplined", "Optimized", "Strategic"].includes(payload.analysis.maturity_level)) {
+  if (!["Foundational", "Disciplined", "Optimized", "Strategic"].includes(payload.analysis.score_level)) {
     return false;
   }
 
@@ -147,14 +147,14 @@ export async function POST(request: NextRequest) {
         totalScore: body.analysis.raw_score,
         maxScore: TEMPLATE_MAX_SCORE,
         completion,
-        maturityLabel: body.analysis.maturity_level,
+        scoreLevel: body.analysis.score_level,
         answers: {} as unknown as Prisma.InputJsonValue,
         result: {
           overallScore,
           totalScore: body.analysis.raw_score,
           maxScore: TEMPLATE_MAX_SCORE,
           completion,
-          maturityLabel: body.analysis.maturity_level,
+          scoreLevel: body.analysis.score_level,
           categories,
         } as unknown as Prisma.InputJsonValue,
       },
@@ -166,7 +166,7 @@ export async function POST(request: NextRequest) {
       email: created.email,
       totalScore: created.totalScore,
       maxScore: created.maxScore,
-      maturityLabel: created.maturityLabel,
+      scoreLevel: created.scoreLevel,
       submittedAt: created.submittedAt.toISOString(),
     }, { status: 201 });
   } catch (error) {

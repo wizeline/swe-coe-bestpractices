@@ -148,7 +148,7 @@ export function AssessmentApp() {
           <small>/ {result.maxScore}</small>
         </div>
 
-        <p className="maturity">{result.maturityLabel}</p>
+        <p className="score-level">{result.scoreLevel}</p>
 
         <div className="progress-wrap" aria-label="completion">
           <div

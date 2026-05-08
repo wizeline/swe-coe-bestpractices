@@ -30,7 +30,7 @@ function toSubmissionRecord(data: {
   totalScore: number | null;
   maxScore: number | null;
   completion: number | null;
-  maturityLabel: string | null;
+  scoreLevel: string | null;
   answers?: Prisma.JsonValue | null;
   result: Prisma.JsonValue;
   submittedAt: Date;
@@ -48,7 +48,7 @@ function toSubmissionRecord(data: {
     totalScore: data.totalScore ?? undefined,
     maxScore: data.maxScore ?? undefined,
     completion: data.completion ?? undefined,
-    maturityLabel: (data.maturityLabel as SubmissionRecord["maturityLabel"]) ?? undefined,
+    scoreLevel: (data.scoreLevel as SubmissionRecord["scoreLevel"]) ?? undefined,
     answers: (data.answers ?? {}) as unknown as AnswerMap,
     result: data.result as unknown as AssessmentResult,
     submittedAt: data.submittedAt.toISOString(),
@@ -89,7 +89,7 @@ export default async function AdminTeamDetailPage({ params, searchParams }: Admi
           totalScore: true,
           maxScore: true,
           completion: true,
-          maturityLabel: true,
+          scoreLevel: true,
           result: true,
           submittedAt: true,
         },
@@ -137,7 +137,7 @@ export default async function AdminTeamDetailPage({ params, searchParams }: Admi
                 <th>Email</th>
                 <th>Score</th>
                 <th>Completion</th>
-                <th>Maturity</th>
+                <th>Score Level</th>
                 <th>Running Avg</th>
               </tr>
             </thead>
@@ -153,7 +153,7 @@ export default async function AdminTeamDetailPage({ params, searchParams }: Admi
                     <td>{submission.email}</td>
                     <td className="score-cell">{submission.totalScore}/{submission.maxScore}</td>
                     <td>{submission.completion}%</td>
-                    <td><span className="status-badge">{submission.maturityLabel}</span></td>
+                    <td><span className="status-badge">{submission.scoreLevel}</span></td>
                     <td className="score-cell">{submission.runningAverageScore}</td>
                   </tr>
                 ))

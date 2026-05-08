@@ -186,7 +186,7 @@ Session owners can create and delete their own `AssessmentSession` records from 
 Configured admins can access `/admin` to compare all sessions and inspect database-wide activity counts.
 The admin report supports `from`, `to`, `sort`, and `page` query params for date filtering, ordering, and pagination. Team drilldown uses `/admin/team/[code]` and preserves active report filters in the URL for return navigation.
 
-`Submission` also stores denormalized metrics (`totalScore`, `maxScore`, `completion`, `maturityLabel`) to support more efficient reporting and future DB-level aggregations.
+`Submission` also stores denormalized metrics (`totalScore`, `maxScore`, `completion`, `scoreLevel`) to support more efficient reporting and future DB-level aggregations.
 
 All assessment data is scoped to the authenticated session email on the server.
 Client components should use `src/lib/storage.ts`. Do not call Prisma directly from client-side code.

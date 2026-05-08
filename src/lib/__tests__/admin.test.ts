@@ -13,7 +13,7 @@ import type { AssessmentResult, DatabaseStats, SubmissionRecord } from "@/types/
 
 const originalAdminEmails = process.env.ADMIN_EMAILS;
 
-function getLabel(totalScore: number): AssessmentResult["maturityLabel"] {
+function getLabel(totalScore: number): AssessmentResult["scoreLevel"] {
   if (totalScore < 13) {
     return "Foundational";
   }
@@ -32,7 +32,7 @@ function makeResult(totalScore: number, completion = 100): AssessmentResult {
     totalScore,
     maxScore: 48,
     completion,
-    maturityLabel: getLabel(totalScore),
+    scoreLevel: getLabel(totalScore),
     categories: [
       {
         id: "pillar-1",
@@ -124,7 +124,7 @@ describe("buildCrossTeamComparison", () => {
       averageTotalScore: 40,
       totalSubmissions: 1,
       uniqueParticipants: 1,
-      maturityLabel: "Strategic",
+      scoreLevel: "Strategic",
       latestSubmissionAt: "2026-04-24T11:30:00.000Z",
     }));
     expect(comparison.sessions[1]).toEqual(expect.objectContaining({
@@ -132,7 +132,7 @@ describe("buildCrossTeamComparison", () => {
       averageTotalScore: 20,
       totalSubmissions: 2,
       uniqueParticipants: 2,
-      maturityLabel: "Disciplined",
+      scoreLevel: "Disciplined",
       latestSubmissionAt: "2026-04-24T10:45:00.000Z",
     }));
   });
@@ -163,7 +163,7 @@ describe("buildCrossTeamComparison", () => {
       uniqueParticipants: 0,
       averageTotalScore: 0,
       averageCompletion: 0,
-      maturityLabel: "Foundational",
+      scoreLevel: "Foundational",
       latestSubmissionAt: null,
     }));
   });
@@ -183,7 +183,7 @@ describe("applySessionFilters", () => {
       averageTotalScore: 18,
       averageCompletion: 95,
       maxScore: 48,
-      maturityLabel: "Disciplined" as const,
+      scoreLevel: "Disciplined" as const,
       categoryAverages: {},
     },
     {
@@ -198,7 +198,7 @@ describe("applySessionFilters", () => {
       averageTotalScore: 40,
       averageCompletion: 100,
       maxScore: 48,
-      maturityLabel: "Strategic" as const,
+      scoreLevel: "Strategic" as const,
       categoryAverages: {},
     },
   ];

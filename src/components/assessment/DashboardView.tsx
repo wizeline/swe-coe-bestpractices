@@ -363,7 +363,7 @@ function ScoreCard({ result, email }: ScoreCardProps) {
           <small>/ {result.maxScore}</small>
         </div>
 
-        <p className="maturity">{result.maturityLabel}</p>
+        <p className="score-level">{result.scoreLevel}</p>
 
         <div className="progress-wrap" aria-label="completion">
           <div className="progress-bar" style={{ width: `${result.completion}%` }} />
@@ -527,7 +527,7 @@ function TeamView({ stats, selectedSession }: TeamViewProps) {
                       </td>
                       <td>{latest.result.completion}%</td>
                       <td>
-                        <span className="status-badge">{latest.result.maturityLabel}</span>
+                        <span className="status-badge">{latest.result.scoreLevel}</span>
                       </td>
                       <td className="date-cell">{new Date(latest.submittedAt).toLocaleDateString()}</td>
                     </tr>

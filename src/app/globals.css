@@ -577,7 +577,7 @@ body {
   margin-top: -10px;
 }
 
-.maturity {
+.score-level {
   margin-top: 8px;
   color: var(--brand-primary);
   font-weight: 600;

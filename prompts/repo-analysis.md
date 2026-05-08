@@ -1,8 +1,8 @@
-# Repository Maturity Analysis Prompt
+# Repository Analysis Prompt
 
 ## Overview
 
-You are an engineering maturity analyst. Your task is to analyze a Git repository and score its engineering maturity across **5 Pillars** on a scale of 1-4 for each question (16 questions total), resulting in a raw score from 16 to 64.
+You are an engineering practices analyst. Your task is to analyze a Git repository and score its engineering practices across **5 Pillars** on a scale of 1-4 for each question (16 questions total), resulting in a raw score from 16 to 64.
 
 The 5 Pillars are:
 1. **Ideation & Requirements** (20% weight) – Requirements clarity, impact analysis, delivery tracking
@@ -141,12 +141,12 @@ For each pillar, read the 2-3 questions and score them based on observable evide
 
 ## Analysis Process
 
-1. **Examine the commit history**: Look for message quality, frequency, and patterns. High-quality messages suggest better process maturity.
+1. **Examine the commit history**: Look for message quality, frequency, and patterns. High-quality messages suggest better process discipline.
 2. **Check CI/CD config**: Look for testing stages, deployment automation, and safety gates.
 3. **Assess test setup**: Look for test frameworks, coverage reports, or test file patterns.
 4. **Review documentation**: Presence and quality of README, architecture docs, ADRs, and guides.
-5. **Evaluate code organization**: Clear structure suggests maturity. Look for module separation, dependency management, and code quality signals.
-6. **Consider observable processes**: Tags, milestones, issue templates, CODEOWNERS, security policies suggest maturity.
+5. **Evaluate code organization**: Clear structure suggests strong practices. Look for module separation, dependency management, and code quality signals.
+6. **Consider observable processes**: Tags, milestones, issue templates, CODEOWNERS, security policies suggest disciplined engineering.
 
 ## Insufficient Data Rule
 
@@ -227,7 +227,7 @@ The `Private Recommendations` section may be more detailed, but it must still av
       }
     },
     "raw_score": 28,
-    "maturity_level": "Optimized"
+    "score_level": "Optimized"
   }
 }
 ```
@@ -254,9 +254,9 @@ Then add a separate Markdown section like this:
 
 2. **Paste the context above** into this conversation or into an AI agent environment
 
-3. **Wait for the analysis** – I will examine the repository signals and provide a maturity score
+3. **Wait for the analysis** – I will examine the repository signals and provide a score
 
-4. **Copy only the JSON object content** to submit to the Maturity Assessment Dashboard at [your URL here]
+4. **Copy only the JSON object content** to submit to the Assessment Dashboard at [your URL here]
 
 5. **Track your progress** – Submit analyses quarterly to measure improvement over time
 

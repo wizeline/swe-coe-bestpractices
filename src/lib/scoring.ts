@@ -18,9 +18,9 @@ const average = (values: number[]) => {
   return values.reduce((acc, value) => acc + value, 0) / values.length;
 };
 
-export const getMaturityLabel = (
+export const getScoreLevel = (
   score: number,
-): AssessmentResult["maturityLabel"] => {
+): AssessmentResult["scoreLevel"] => {
   if (score < 13) {
     return "Foundational";
   }
@@ -107,7 +107,7 @@ export const calculateAssessment = (
     totalScore,
     maxScore,
     completion: Number(clamp(completion, 0, 100).toFixed(0)),
-    maturityLabel: getMaturityLabel(totalScore),
+    scoreLevel: getScoreLevel(totalScore),
     categories: categoryResults,
   };
 };

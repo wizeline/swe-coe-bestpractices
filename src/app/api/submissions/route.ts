@@ -11,7 +11,7 @@ function toSubmissionRecord(data: {
   totalScore: number | null;
   maxScore: number | null;
   completion: number | null;
-  maturityLabel: string | null;
+  scoreLevel: string | null;
   answers: Prisma.JsonValue;
   result: Prisma.JsonValue;
   submittedAt: Date;
@@ -29,7 +29,7 @@ function toSubmissionRecord(data: {
     totalScore: data.totalScore ?? undefined,
     maxScore: data.maxScore ?? undefined,
     completion: data.completion ?? undefined,
-    maturityLabel: (data.maturityLabel as SubmissionRecord["maturityLabel"]) ?? undefined,
+    scoreLevel: (data.scoreLevel as SubmissionRecord["scoreLevel"]) ?? undefined,
     answers: data.answers as unknown as AnswerMap,
     result: data.result as unknown as AssessmentResult,
     submittedAt: data.submittedAt.toISOString(),
@@ -134,7 +134,7 @@ export async function POST(request: NextRequest) {
       totalScore: body.result.totalScore,
       maxScore: body.result.maxScore,
       completion: body.result.completion,
-      maturityLabel: body.result.maturityLabel,
+      scoreLevel: body.result.scoreLevel,
       answers: body.answers as unknown as Prisma.InputJsonValue,
       result: body.result as unknown as Prisma.InputJsonValue,
     },

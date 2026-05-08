@@ -23,7 +23,7 @@ export default async function AssessmentPage({ searchParams }: AssessmentPagePro
     <section className="page-container">
       <div className="page-header">
         <h1>Assessment Form</h1>
-        <p>Fill out this form to evaluate your engineering team&apos;s Best Practices Framework maturity.</p>
+        <p>Fill out this form to evaluate your engineering team&apos;s Best Practices Framework.</p>
       </div>
       <AssessmentForm userEmail={userEmail} initialSessionCode={params.session?.toUpperCase() ?? null} />
       

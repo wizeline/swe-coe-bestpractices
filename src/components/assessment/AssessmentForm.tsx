@@ -143,13 +143,10 @@ export function AssessmentForm({ userEmail, initialSessionCode }: AssessmentForm
           <div className="modal-content">
             <h3 id="onboarding-title">Before you start</h3>
             <p>
-              This assessment measures <strong>your personal engineering habits</strong> — not your team&apos;s or your project&apos;s.
+              This assessment scores <strong>your personal engineering habits</strong>, not your team&apos;s or project&apos;s practices.
             </p>
             <p>
-              For each question, select the option that most honestly describes what <strong>you personally do today</strong>, consistently and on your own initiative. A project can have strong practices in place while individual engineers don&apos;t apply them as personal habits, that gap is exactly what this assessment is designed to surface.
-            </p>
-            <p>
-              There are no right or wrong answers. Scores reflect where you are now so you can identify the highest-impact habits to build next.
+              Select the option that most honestly describes what <strong>you personally do today</strong>. There are no right or wrong answers.
             </p>
             <div className="modal-actions">
               <button

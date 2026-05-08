@@ -4,7 +4,7 @@ AI agent and coding assistant instructions for this repository.
 
 ## Project Overview
 
-**SWE Best Practices Pulse** is a Next.js 16 internal tool for self-assessing engineering maturity across five pillars. Developers score 16 practices on a 1–4 scale (16 questions × 4 levels = 0–64 raw score) and receive maturity labels, weighted pillar scores, and prioritized recommendations.
+**SWE Best Practices Pulse** is a Next.js 16 internal tool for self-assessing engineering practices across five pillars. Developers score 16 practices on a 1–4 scale (16 questions × 4 levels = 0–64 raw score) and receive score levels, weighted pillar scores, and prioritized recommendations.
 
 - **Stack:** Next.js 16 (App Router), TypeScript 5 strict, plain CSS, no Tailwind
 - **State:** Prisma + SQLite/Postgres via Next.js Route Handlers (`/api/*`)
@@ -41,7 +41,7 @@ src/
 - `ScoreValue = 1 | 2 | 3 | 4` — never use raw numbers outside this union
 - **Per-question:** 1 = Foundational, 2 = Disciplined, 3 = Optimized, 4 = Strategic
 - **Raw score range:** 0–64 (16 questions × 4 levels)
-- **Maturity thresholds:** `<13` Foundational · `13–24` Disciplined · `25–36` Optimized · `≥37` Strategic
+- **Score thresholds:** `<13` Foundational · `13–24` Disciplined · `25–36` Optimized · `≥37` Strategic
 - `calculateAssessment(model, answers)` returns an `AssessmentResult` — the single source of truth for all scores
 - **Per-pillar recommendations:** Each pillar shows action items (default: 1 per pillar) — the most relevant next-level recommendations based on current score. Configure via `NEXT_PUBLIC_MAX_RECOMMENDATIONS` environment variable in `src/lib/config.ts`.
 
@@ -107,12 +107,12 @@ If any required item cannot be completed (for example, missing testability in le
 
 ## Repository Analysis Prompt
 
-The project includes an automated repository analysis prompt (`prompts/repo-analysis.md`) that allows engineers to score their repositories without manual input. The prompt analyzes observable signals (commit history, test coverage, CI/CD configuration, documentation, code organization) and generates a maturity score.
+The project includes an automated repository analysis prompt (`prompts/repo-analysis.md`) that allows engineers to score their repositories without manual input. The prompt analyzes observable signals (commit history, test coverage, CI/CD configuration, documentation, code organization) and generates a score.
 
 ### Maintaining the Prompt
 
 1. **Scoring rules must stay in sync with `src/lib/scoring.ts`:**
-   - Maturity thresholds in the prompt must match `getMaturityLabel()` thresholds
+   - Score thresholds in the prompt must match `getScoreLevel()` thresholds
    - Pillar-scoring logic must align with `calculateAssessment()` logic
    - When scoring logic changes, update the prompt immediately
 
@@ -122,7 +122,7 @@ The project includes an automated repository analysis prompt (`prompts/repo-anal
    - Each question has a 1–4 scale with rubrics describing each level
 
 3. **JSON output format:**
-   - Prompt generates a JSON object with `email`, `analysis`, `raw_score`, `maturity_level`
+   - Prompt generates a JSON object with `email`, `analysis`, `raw_score`, `score_level`
    - This JSON is submitted via POST to `/api/submissions/analysis`
    - The backend creates a `Submission` record with parsed data
 
@@ -137,6 +137,6 @@ The project includes an automated repository analysis prompt (`prompts/repo-anal
 - **Don't instantiate `PrismaClient` in multiple files** — use `src/lib/prisma.ts`
 - **Don't call Prisma from client components** — use `/api/*` route handlers
 - **Don't use `0–3` scale** — the scale is `1–4`; `ScoreValue` enforces this
-- **Don't use normalized scores** — use raw 0–48 scale for thresholds and maturity labels
+- **Don't use normalized scores** — use raw 0–48 scale for thresholds and score levels
 - **`AssessmentApp.tsx` is a legacy entry point** — the active form is `AssessmentForm.tsx`
 - **`vitest.config.ts`** sets the `@` path alias to `src/` — use `@/lib/...` in imports

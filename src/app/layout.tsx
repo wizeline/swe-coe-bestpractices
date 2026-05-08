@@ -19,7 +19,7 @@ const ibmPlexMono = IBM_Plex_Mono({
 export const metadata: Metadata = {
   title: "Wizeline Best Practices Framework Pulse",
   description:
-    "Internal POC to assess engineering best practices maturity and improvement opportunities.",
+    "Internal POC to assess engineering best practices and improvement opportunities.",
 };
 
 export default async function RootLayout({

@@ -35,7 +35,7 @@ function toSubmissionRecord(data: {
   totalScore: number | null;
   maxScore: number | null;
   completion: number | null;
-  maturityLabel: string | null;
+  scoreLevel: string | null;
   answers?: Prisma.JsonValue | null;
   result: Prisma.JsonValue;
   submittedAt: Date;
@@ -53,7 +53,7 @@ function toSubmissionRecord(data: {
     totalScore: data.totalScore ?? undefined,
     maxScore: data.maxScore ?? undefined,
     completion: data.completion ?? undefined,
-    maturityLabel: (data.maturityLabel as SubmissionRecord["maturityLabel"]) ?? undefined,
+    scoreLevel: (data.scoreLevel as SubmissionRecord["scoreLevel"]) ?? undefined,
     answers: (data.answers ?? {}) as unknown as AnswerMap,
     result: data.result as unknown as AssessmentResult,
     submittedAt: data.submittedAt.toISOString(),
@@ -117,7 +117,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
             totalScore: true,
             maxScore: true,
             completion: true,
-            maturityLabel: true,
+            scoreLevel: true,
             result: true,
             submittedAt: true,
           },
@@ -156,7 +156,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
       <div className="page-header">
         <h1>Cross-Team Comparison</h1>
         <p>
-          Compare team-session maturity side by side and monitor high-level database activity across assessments,
+          Compare team-session score levels side by side and monitor high-level database activity across assessments,
           sessions, and saved results.
         </p>
       </div>

@@ -188,7 +188,7 @@ export function AdminOverview({
                     <td>{session.totalSubmissions}</td>
                     <td>{session.averageCompletion}%</td>
                     <td>
-                      <span className="status-badge">{session.maturityLabel}</span>
+                      <span className="status-badge">{session.scoreLevel}</span>
                     </td>
                     <td className="date-cell">
                       {session.latestSubmissionAt

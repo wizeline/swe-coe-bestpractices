@@ -21,7 +21,7 @@ const makeResult = (overallScore: number, totalScore = overallScore, maxScore = 
   totalScore,
   maxScore,
   completion: 100,
-  maturityLabel: "Optimized",
+  scoreLevel: "Optimized",
   categories: [
     {
       id: "cat-a",
@@ -148,7 +148,7 @@ describe("submission API storage", () => {
       email: "analyst@example.com",
       totalScore: 24,
       maxScore: 56,
-      maturityLabel: "Disciplined",
+      scoreLevel: "Disciplined",
       submittedAt: new Date().toISOString(),
     };
 

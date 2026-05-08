@@ -8,7 +8,7 @@ import {
   TeamDetailRecord,
   TeamDetailSubmission,
 } from "@/types/assessment";
-import { getMaturityLabel } from "@/lib/scoring";
+import { getScoreLevel } from "@/lib/scoring";
 import { buildTeamStats } from "@/lib/teamStats";
 
 interface SessionComparisonInput {
@@ -73,7 +73,7 @@ export function buildSessionComparisonRecord(input: SessionComparisonInput): Ses
     averageTotalScore: stats.averageTotalScore,
     averageCompletion: averageCompletion(input.submissions),
     maxScore: stats.maxTotalScore,
-    maturityLabel: getMaturityLabel(Math.round(stats.averageTotalScore)),
+    scoreLevel: getScoreLevel(Math.round(stats.averageTotalScore)),
     categoryAverages: stats.categoryAverages,
   };
 }
@@ -214,7 +214,7 @@ export function buildTeamDetail(input: TeamDetailInput): TeamDetailRecord {
     const totalScore = submission.totalScore ?? submission.result.totalScore;
     const maxScore = submission.maxScore ?? submission.result.maxScore;
     const completion = submission.completion ?? submission.result.completion;
-    const maturityLabel = submission.maturityLabel ?? submission.result.maturityLabel;
+    const scoreLevel = submission.scoreLevel ?? submission.result.scoreLevel;
     runningTotal += totalScore;
     return {
       id: submission.id,
@@ -223,7 +223,7 @@ export function buildTeamDetail(input: TeamDetailInput): TeamDetailRecord {
       totalScore,
       maxScore,
       completion,
-      maturityLabel,
+      scoreLevel,
       runningAverageScore: Number((runningTotal / (index + 1)).toFixed(2)),
     };
   });

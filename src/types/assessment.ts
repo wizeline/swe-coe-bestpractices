@@ -46,7 +46,7 @@ export interface AssessmentResult {
   totalScore: number;
   maxScore: number;
   completion: number;
-  maturityLabel: "Foundational" | "Disciplined" | "Optimized" | "Strategic";
+  scoreLevel: "Foundational" | "Disciplined" | "Optimized" | "Strategic";
   categories: CategoryResult[];
 }
 
@@ -59,7 +59,7 @@ export interface SubmissionRecord {
   totalScore?: number;
   maxScore?: number;
   completion?: number;
-  maturityLabel?: AssessmentResult["maturityLabel"];
+  scoreLevel?: AssessmentResult["scoreLevel"];
   answers: AnswerMap;
   result: AssessmentResult;
   submittedAt: string;
@@ -70,7 +70,7 @@ export interface AnalysisSubmissionResponse {
   email: string;
   totalScore: number;
   maxScore: number;
-  maturityLabel: AssessmentResult["maturityLabel"];
+  scoreLevel: AssessmentResult["scoreLevel"];
   submittedAt: string;
 }
 
@@ -112,7 +112,7 @@ export interface SessionComparisonRecord {
   averageTotalScore: number;
   averageCompletion: number;
   maxScore: number;
-  maturityLabel: AssessmentResult["maturityLabel"];
+  scoreLevel: AssessmentResult["scoreLevel"];
   categoryAverages: Record<string, number>;
 }
 
@@ -136,7 +136,7 @@ export interface TeamDetailSubmission {
   totalScore: number;
   maxScore: number;
   completion: number;
-  maturityLabel: AssessmentResult["maturityLabel"];
+  scoreLevel: AssessmentResult["scoreLevel"];
   runningAverageScore: number;
 }
 
