@@ -4,7 +4,7 @@ AI agent and coding assistant instructions for this repository.
 
 ## Project Overview
 
-**SWE Best Practices Pulse** is a Next.js 16 internal tool for self-assessing engineering maturity across five pillars. Developers score 14 practices on a 1–4 scale (14 questions × 4 levels = 0–48 raw score) and receive maturity labels, weighted pillar scores, and prioritized recommendations.
+**SWE Best Practices Pulse** is a Next.js 16 internal tool for self-assessing engineering maturity across five pillars. Developers score 16 practices on a 1–4 scale (16 questions × 4 levels = 0–64 raw score) and receive maturity labels, weighted pillar scores, and prioritized recommendations.
 
 - **Stack:** Next.js 16 (App Router), TypeScript 5 strict, plain CSS, no Tailwind
 - **State:** Prisma + SQLite/Postgres via Next.js Route Handlers (`/api/*`)
@@ -40,7 +40,7 @@ src/
 
 - `ScoreValue = 1 | 2 | 3 | 4` — never use raw numbers outside this union
 - **Per-question:** 1 = Foundational, 2 = Disciplined, 3 = Optimized, 4 = Strategic
-- **Raw score range:** 0–48 (14 questions × 4 levels)
+- **Raw score range:** 0–64 (16 questions × 4 levels)
 - **Maturity thresholds:** `<13` Foundational · `13–24` Disciplined · `25–36` Optimized · `≥37` Strategic
 - `calculateAssessment(model, answers)` returns an `AssessmentResult` — the single source of truth for all scores
 - **Per-pillar recommendations:** Each pillar shows action items (default: 1 per pillar) — the most relevant next-level recommendations based on current score. Configure via `NEXT_PUBLIC_MAX_RECOMMENDATIONS` environment variable in `src/lib/config.ts`.

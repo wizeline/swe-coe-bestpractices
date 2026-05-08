@@ -81,6 +81,72 @@ Context:
 [paste context here]
 ```
 
+### Build reliable CI/CD pipelines
+
+Automate the path from code to production so every delivery is consistent, safe, and reversible.
+
+#### Do this
+
+Set up a CI pipeline that runs builds, tests, linting, and security checks automatically on every pull request. Add a deployment stage with environment promotion and rollback capabilities.
+
+#### Why this works
+
+Manual deployments and local-only testing introduce inconsistency and risk. A well-structured CI/CD pipeline catches problems early, enforces shared quality standards, and makes rollbacks predictable — reducing the cost of every release.
+
+#### How to
+
+- With AI: ask an assistant to generate a GitHub Actions or pipeline config, then review each step for correctness, security, and coverage gaps before committing it.
+- Without AI: start with a minimal workflow that runs tests on every PR, then incrementally add linting, security scans, and deployment stages.
+- Team habit: block merges when CI fails; treat a broken pipeline as a production incident.
+- Useful additions: environment-specific secrets management, deployment gates between staging and production, and automated smoke tests post-deploy.
+
+```text
+Generate a CI/CD pipeline config for this project.
+
+Include:
+- build and test steps
+- linting and security checks
+- environment promotion strategy (staging → production)
+- rollback mechanism
+- notification on failure
+
+Project context:
+[paste context here]
+```
+
+### Enforce data integrity across services
+
+Treat data consistency as a design constraint, not an afterthought.
+
+#### Do this
+
+Define validation rules at every system boundary, use transactional logic for related writes, and add constraints at the database level. Document what guarantees each service provides and what it assumes from its inputs.
+
+#### Why this works
+
+Data integrity issues compound over time. Inconsistent records and silent corruption are hard to detect and expensive to recover from. Teams that design for correctness at the boundary — with clear contracts, validation, and observability — prevent entire categories of bugs from reaching production.
+
+#### How to
+
+- With AI: ask an assistant to review an API schema or database model for missing constraints, edge cases, or unvalidated fields, then evaluate the suggestions against business rules.
+- Without AI: define a validation checklist per endpoint or service boundary, require schema review in PRs, and enforce DB-level constraints (not-null, foreign keys, unique) as a default.
+- Team habit: treat any unvalidated input reaching business logic as a defect; enforce it in code review.
+- Good evidence: input validation at the API boundary, constraints in the DB schema, transactional writes for multi-step operations, and at least one test for an invalid-input scenario.
+
+```text
+Review this data model or API contract for integrity gaps.
+
+Return:
+- missing constraints or validations
+- edge cases that could corrupt state
+- recommended DB-level constraints
+- transactional logic recommendations
+- observability suggestions for data anomalies
+
+Model or contract:
+[paste here]
+```
+
 ## Pillar 3 - Development Hygiene
 
 Keep implementation changes small enough that intent stays visible in code review.

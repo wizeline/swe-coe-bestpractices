@@ -21,16 +21,10 @@ interface AssessmentFormProps {
   initialSessionCode: string | null;
 }
 
-const SCORE_LABELS: Record<string, string> = {
-  "1": "Foundational",
-  "2": "Disciplined",
-  "3": "Optimized",
-  "4": "Strategic",
-};
-
 export function AssessmentForm({ userEmail, initialSessionCode }: AssessmentFormProps) {
   const router = useRouter();
   const [answers, setAnswers] = useState<AnswerMap>({});
+  const [showOnboarding, setShowOnboarding] = useState(true);
   const [currentPillar, setCurrentPillar] = useState(0);
   const [formError, setFormError] = useState("");
   const [isLoadingDraft, setIsLoadingDraft] = useState(false);
@@ -141,6 +135,32 @@ export function AssessmentForm({ userEmail, initialSessionCode }: AssessmentForm
 
   return (
     <div>
+      {showOnboarding && (
+        <div className="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="onboarding-title">
+          <div className="modal-content">
+            <h3 id="onboarding-title">Before you start</h3>
+            <p>
+              This assessment measures <strong>your personal engineering habits</strong> — not your team&apos;s or your project&apos;s.
+            </p>
+            <p>
+              For each question, select the option that most honestly describes what <strong>you personally do today</strong>, consistently and on your own initiative. A project can have strong practices in place while individual engineers don&apos;t apply them as personal habits, that gap is exactly what this assessment is designed to surface.
+            </p>
+            <p>
+              There are no right or wrong answers. Scores reflect where you are now so you can identify the highest-impact habits to build next.
+            </p>
+            <div className="modal-actions">
+              <button
+                type="button"
+                className="button solid"
+                onClick={() => setShowOnboarding(false)}
+                autoFocus
+              >
+                Understood
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <article className="card form-card">
         {/* ── Header ── */}
         <header className="card-header">
@@ -148,7 +168,6 @@ export function AssessmentForm({ userEmail, initialSessionCode }: AssessmentForm
             <h2>{assessmentTemplate.title}</h2>
             <span className="email-badge">{userEmail}</span>
           </div>
-          <p>{assessmentTemplate.description}</p>
           {isLoadingDraft && <p>Loading your saved draft...</p>}
           {assessmentSession && (
             <div className="session-banner">
@@ -251,9 +270,6 @@ export function AssessmentForm({ userEmail, initialSessionCode }: AssessmentForm
                                 aria-label={`${label}${optionDescription ? `: ${optionDescription}` : ""}`}
                                 aria-describedby={optionDescription ? optionDescriptionId : undefined}
                               />
-                              <span className="scale-option-head" aria-hidden="true">
-                                <span className="scale-label-text">{SCORE_LABELS[String(value)] ?? label}</span>
-                              </span>
                               {optionDescription && (
                                 <span id={optionDescriptionId} className="scale-description">
                                   {optionDescription}

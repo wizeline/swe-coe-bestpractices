@@ -156,7 +156,7 @@ export function AdminOverview({
                 <th>Participants</th>
                 <th>Submissions</th>
                 <th>Completion</th>
-                <th>Maturity</th>
+                <th>Score Level</th>
                 <th>Last Submission</th>
               </tr>
             </thead>

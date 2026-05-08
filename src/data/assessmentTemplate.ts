@@ -3,9 +3,9 @@ import { AssessmentModel } from "@/types/assessment";
 export const assessmentTemplate: AssessmentModel = {
   title: "SWE Best Practices Pulse",
   description:
-    "A 14-question self-assessment measuring SWE maturity across five pillars from Foundational (ad-hoc) to Strategic (AI-orchestrated).",
+    "A 16-question personal self-assessment that scores your individual engineering habits across five pillars. Select the option that most accurately describes what YOU personally do today, not what your team or project does in general.",
   scaleLabel:
-    "1 = Foundational · 2 = Disciplined · 3 = Optimized · 4 = Strategic",
+    "1 = I rarely or never do this · 2 = I do this sometimes or informally · 3 = I do this consistently as a personal habit · 4 = I do this with a structured, repeatable approach and continuously improve it",
   categories: [
     {
       id: "pillar-1-ideation",
@@ -17,17 +17,17 @@ export const assessmentTemplate: AssessmentModel = {
         {
           id: "p1-q1",
           text: "How do you document requirements before starting a task?",
-          hint: "1 = I build based on vague notes or verbal requests. · 2 = I write a basic summary of the feature in the ticket. · 3 = I write a formal spec with clear Acceptance Criteria. · 4 = I use an AI Agent to turn raw client requests into a structured 'Super-Spec'.",
+          hint: "1 = I start coding from a verbal request or Slack message without writing anything down. · 2 = I write a brief summary in the ticket but skip explicit acceptance criteria. · 3 = I write a formal spec with clear Acceptance Criteria (Given/When/Then) before every task, not just large ones. · 4 = I validate the spec with the requester before coding, resolve all ambiguous criteria until they are testable, and flag scope risks early.",
         },
         {
           id: "p1-q2",
           text: "How do you check what your code will break (impact analysis)?",
-          hint: "1 = I start coding immediately and fix things as they break. · 2 = I manually check a few relevant files before I start. · 3 = I create a map of all dependencies and services that will be affected. · 4 = I use a code-aware AI agent to scan the whole system for risks.",
+          hint: "1 = I start coding and deal with breakage when it appears in tests or review. · 2 = I search the repo for likely affected files before I start, but the analysis is informal and undocumented. · 3 = Before coding, I map all dependencies my change could affect and document that analysis in the ticket or PR. · 4 = I share the impact map with owners of affected services, confirm no conflicts, and update it if scope changes mid-task.",
         },
         {
           id: "p1-q3",
           text: "How do you track your delivery speed and quality?",
-          hint: "1 = I don't track my time or velocity. · 2 = I just check if I meet the sprint deadline. · 3 = I manually track how long tasks take and how often my code gets sent back. · 4 = I use automated tools to track my DORA metrics in real-time.",
+          hint: "1 = I don't monitor my own delivery speed or PR quality; I focus on finishing tasks. · 2 = I check if I hit the sprint deadline but don't track rework, review cycles, or bug rates. · 3 = I regularly note my cycle times and how often PRs come back with significant comments, and use that to adjust estimates. · 4 = Each sprint I identify one specific bottleneck from my data and apply a concrete change to address it.",
         },
       ],
       recommendations: [
@@ -64,17 +64,17 @@ export const assessmentTemplate: AssessmentModel = {
         {
           id: "p2-q4",
           text: "How do you find reusable components or patterns?",
-          hint: "1 = I write new code without checking if we already solved this. · 2 = I manually search the repo to see if someone wrote similar code. · 3 = I check our Architectural Decision Records (ADRs) or shared UI libraries. · 4 = I query our internal AI Knowledge Base for validated building blocks.",
+          hint: "1 = I write solutions from scratch without checking if a similar one exists. · 2 = I do a manual repo search for similar code but don't consult architecture docs or ADRs. · 3 = I consult ADRs, shared libraries, or architecture standards before designing my solution and reference them in my approach. · 4 = When I reuse a pattern, I document or improve it if I find gaps and share my findings with the team.",
         },
         {
           id: "p2-q5",
           text: "Do you create a technical plan before coding?",
-          hint: "1 = I just code straight from my head. · 2 = I make a quick whiteboard sketch or mental note. · 3 = I write a Design Doc with diagrams (like C4 or Mermaid) in the repo. · 4 = I use AI to validate that my plan matches the company's architecture standards.",
+          hint: "1 = I start coding directly from the ticket without writing down my approach. · 2 = I sketch the approach informally but don't produce a shareable, reviewable artifact. · 3 = I write a Design Doc with at least one diagram and share it for review before coding starts, for any non-trivial change. · 4 = I get explicit feedback from a senior engineer or architect, incorporate their input, and update the doc if the design evolves during implementation.",
         },
         {
           id: "p2-q6",
           text: "When do you evaluate security risks?",
-          hint: "1 = I assume the infrastructure/cloud handles security. · 2 = I keep general security best practices in mind while coding. · 3 = I do a specific 'Threat Modeling' check to see how data flows and where it can be hacked. · 4 = I use an AI security scanner to detect flaws in my design document before coding.",
+          hint: "1 = I don't do explicit security analysis; I trust the platform or framework to handle it. · 2 = I apply general security awareness while coding (sanitizing inputs, not hardcoding secrets) but without a dedicated review step. · 3 = Before coding, I trace data flows and identify at least one threat vector using a lightweight threat model, for every feature involving sensitive data or external inputs. · 4 = I have my threat model reviewed by a peer before coding, document the mitigations I will apply, and verify them during code review.",
         },
       ],
       recommendations: [
@@ -105,46 +105,56 @@ export const assessmentTemplate: AssessmentModel = {
       id: "pillar-3-development",
       title: "Pillar 3 – Development Hygiene",
       description:
-        "How clean, reviewable, and well-documented your actual code changes are.",
+        "How clean, reviewable, and well-documented your actual code changes are, how reliably you deliver them, and how consistently you protect data integrity.",
       weight: 0.2,
       questions: [
         {
           id: "p3-q7",
           text: "How do you manage the size and scope of your Pull Requests (PRs)?",
-          hint: "1 = I submit large PRs that mix multiple features and refactors together. · 2 = I keep my PR focused on the ticket, regardless of how large it gets. · 3 = I enforce single-responsibility PRs (separating refactors from features) to keep reviewer cognitive load low. · 4 = I use an AI agent to automatically split my work into atomic, easily reviewable sub-commits.",
+          hint: "1 = My PRs mix multiple concerns because I commit everything as I go. · 2 = I keep the PR focused on the ticket but don't actively split it when it grows large. · 3 = I plan a PR sequence before coding: refactors in one PR, behavior changes in another, each with a single stated purpose. · 4 = After each PR cycle, I review the feedback and use it to improve how I split my next work.",
         },
         {
           id: "p3-q8",
           text: "How do you ensure your code does exactly what the ticket asked?",
-          hint: "1 = I change requirements on the fly if it's easier to code. · 2 = I manually test the app to see if it works. · 3 = I explicitly link specific functions in my code back to specific Acceptance Criteria. · 4 = I use an automated AI agent to verify my code matches the spec before opening the PR.",
+          hint: "1 = I implement what seems right and rely on review comments to catch spec misalignments. · 2 = I manually test the main flow before opening the PR but don't trace each Acceptance Criterion explicitly. · 3 = Before merging, I trace each Acceptance Criterion to a specific piece of code or test to confirm nothing was missed. · 4 = I include a traceability note in my PR description mapping each AC to the code or test that covers it, so reviewers can verify coverage without hunting through the diff.",
         },
         {
           id: "p3-q9",
           text: "When do you update the documentation?",
-          hint: "1 = I leave it for later or never do it. · 2 = I update the README a few days after my code is merged. · 3 = I update docs in the exact same commit as my code changes (Docs-as-Code). · 4 = I use an AI agent to auto-generate and refresh documentation based on my code.",
+          hint: "1 = I rarely update documentation; I leave it for later, which often means never. · 2 = I update docs after the code is merged when I remember, but it's not a consistent habit. · 3 = I update documentation in the same PR as the code change, every time, not as an afterthought. · 4 = After merging, I re-read the docs as if I were a new engineer, fix any gaps I find, and confirm they reflect the actual current behavior.",
+        },
+        {
+          id: "p2-q15",
+          text: "Is your CI/CD pipeline ensuring reliable and consistent delivery?",
+          hint: "1 = I deploy manually or push to shared branches without relying on a pipeline. · 2 = My PRs go through a basic CI pipeline but I don't verify all gates pass before merging; I treat CI as optional. · 3 = Every change I merge passes all automated quality gates (tests, linting, security checks) in CI, and I follow a deployment process with documented rollback steps. · 4 = When a gate fails, I investigate root cause rather than just re-running. I actively improve the pipeline when I find gaps.",
+        },
+        {
+          id: "p2-q16",
+          text: "Are you ensuring data integrity across your system?",
+          hint: "1 = I assume data arrives valid; I don't add explicit validation or DB constraints. · 2 = I validate inputs at the entry point but skip deeper constraints like DB-level checks or transactions for related writes. · 3 = I enforce integrity at every boundary I own: input validation, DB constraints, and transactional logic for multi-step operations, in every feature I build. · 4 = I write integrity tests that verify my data guarantees in CI and document what my service promises and what it assumes from upstream.",
         },
       ],
       recommendations: [
         {
           id: "p3-r1",
           maxScoreInclusive: 12,
-          title: "Keep PRs focused and update docs",
+          title: "Focus PRs, set up CI, and add input validation",
           action:
-            "Scope each PR to a single concern. Example: If you notice a typo in an unrelated file, fix it in a separate PR (or a clearly isolated commit) rather than tangling it with your current feature's code.",
+            "Scope each PR to a single concern, add a basic CI workflow that runs tests on every PR, and validate inputs at entry points. Example: Add a GitHub Actions step that runs your test suite before a PR can be merged, and write one validation check for an endpoint you own.",
         },
         {
           id: "p3-r2",
           maxScoreInclusive: 24,
-          title: "Enforce single-responsibility PRs and Docs-as-Code",
+          title: "Enforce single-responsibility PRs, quality gates, and data constraints",
           action:
-            "Keep PRs optimized for reviewability. Example: If you need to refactor a messy function to build your new feature, make PR #1 just the refactor, and PR #2 just the new feature.",
+            "Split refactors from feature PRs, require all CI gates to pass before merging, and enforce DB-level constraints and transactions for related writes. Example: Make PR #1 the refactor and PR #2 the feature; block merges when lint or tests fail; wrap multi-step DB writes in a transaction.",
         },
         {
           id: "p3-r3",
           maxScoreInclusive: 36,
-          title: "Automate spec-to-code traceability",
+          title: "Automate traceability, pipeline stages, and data observability",
           action:
-            "Use an agent to split large tasks into atomic commits. Example: Use an AI tool that reads your diffs and automatically generates a detailed, accurate PR description summarizing the changes.",
+            "Use AI to plan PR splits and spec-to-code traceability, contribute pipeline improvements (parallelization, environment promotion), and add monitoring for data anomalies. Example: Use an AI tool to generate a PR description from your diff, add a staging promotion gate to CI, and set an alert for unexpected null rates in a key column.",
         },
       ],
     },
@@ -158,17 +168,17 @@ export const assessmentTemplate: AssessmentModel = {
         {
           id: "p4-q10",
           text: "How do you test for hidden bugs?",
-          hint: "1 = I don't write automated tests. · 2 = I write Unit Tests just for the 'Happy Path' (when everything works right). · 3 = I use a checklist to test edge cases like Nulls, extreme numbers, and errors. · 4 = I use a QA AI agent to discover weird edge cases I didn't think of.",
+          hint: "1 = I don't write automated tests; I validate manually or rely on others to find bugs. · 2 = I write tests for the main success flow but don't systematically cover failure cases or edge inputs. · 3 = For every meaningful piece of logic I write, I cover at least one edge case and one failure mode, not just the happy path. · 4 = Before writing tests, I list the failure modes most likely to cause user impact, prioritize them, and cover the highest-risk ones first. I revisit this list when production issues occur.",
         },
         {
           id: "p4-q11",
           text: "How do you verify your logic before merging?",
-          hint: "1 = I merge as soon as the CI pipeline is green. · 2 = I ask a teammate to do a standard code review. · 3 = I do a line-by-line self-audit of my own code before asking for a review. · 4 = I use an AI 'Verifier' to audit my logic against the spec before a human looks at it.",
+          hint: "1 = I open the PR when CI is green and count on reviewers to catch logic issues. · 2 = I do a quick re-read of my diff before tagging reviewers but it's not structured; I'm mainly looking for obvious mistakes. · 3 = I do a structured self-review before every PR: line by line through my diff, verifying each function against the acceptance criteria. · 4 = Before requesting review, I note the riskiest parts of the change in the PR description and what I verified, guiding reviewers to areas that need the most scrutiny.",
         },
         {
           id: "p4-q12",
           text: "How do you handle broken legacy tests or technical debt?",
-          hint: "1 = I ignore failing old tests or skip them to get my work done. · 2 = I only fix old tests if my new code broke them. · 3 = I actively dedicate time to clean up and refactor messy tests in the files I touch. · 4 = I use an AI agent to automatically repair and update legacy tests in the background.",
+          hint: "1 = I skip or comment out failing tests that block progress and leave a note to fix later. · 2 = I fix tests my changes directly broke but don't touch legacy debt I didn't cause. · 3 = When I work in a file, I also clean up or rewrite outdated or flaky tests I find there, even unrelated ones. · 4 = I proactively identify test debt in areas I work on, propose a cleanup plan, and execute it alongside feature work. I track coverage changes in areas I own over time.",
         },
       ],
       recommendations: [
@@ -205,12 +215,12 @@ export const assessmentTemplate: AssessmentModel = {
         {
           id: "p5-q13",
           text: "How easy is it to debug your code in production?",
-          hint: "1 = I don't add specific logs. · 2 = I add basic text logs (e.g., 'User logged in') to track errors. · 3 = I use structured JSON logging and set up Dashboards/Alerts for my feature. · 4 = I format my code and logs specifically so AI can do automated anomaly detection.",
+          hint: "1 = I don't add feature-specific logging; debugging relies on generic error traces. · 2 = I add basic text logs at key steps but they're not structured or consistently queryable. · 3 = I write structured logs (e.g., JSON with userId, endpoint, errorCode) and set up at least one dashboard or alert before my feature goes to production. · 4 = After each deploy, I verify my alerts and dashboards reflect actual system behavior, update them as the feature evolves, and document first-response steps for each alert I own.",
         },
         {
           id: "p5-q14",
           text: "How easily can another engineer take over your work?",
-          hint: "1 = I finish tasks without leaving context for the next person. · 2 = I explain how my code works in the PR description only. · 3 = I write a formal Knowledge Transfer (KT) guide and link it in the repo. · 4 = I use AI to automatically update our central engineering wiki with my implementation details.",
+          hint: "1 = I finish tasks without leaving context beyond the code; handoff knowledge lives only in my head. · 2 = I describe the implementation in the PR description, but that context is buried after merge. · 3 = I write a KT document (architecture notes, runbook, or README section) and link it from the repo so any engineer can find it independently. · 4 = I keep my KT documentation current as the feature evolves, share it proactively with teammates who will support it, and review it with them to close any gaps."
         },
       ],
       recommendations: [
